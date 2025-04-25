@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/04/25 17:41:40 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/04/25 18:18:22 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,27 +30,27 @@ int main() {
     }
 
     int opt = 1;
-    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));//pour pouvoir se reconnecter avec la meme adresse en cas de deconnexion
 
     struct sockaddr_in server_addr;
     memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
-    server_addr.sin_port = htons(PORT);
+    server_addr.sin_port = htons(PORT);//convertit un numero de port dans quelque chose de comprehensible pour l ordi
 
-    if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+    if (bind(server_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) { //lie un port avec une socket (ici server fd)
         perror("bind");
         return 1;
     }
 
-    if (listen(server_fd, SOMAXCONN) < 0) {
+    if (listen(server_fd, SOMAXCONN) < 0) {//ecoute toutes les entree sur la socket
         perror("listen");
         return 1;
     }
 
     std::cout << "🟢 Serveur IRC en écoute sur le port " << PORT << std::endl;
 
-    std::vector<struct pollfd> poll_fds;
+    std::vector<struct pollfd> poll_fds;//cree un tableau de poll_fd (poll permet de checker les update sur un fd)
 
     struct pollfd server_poll_fd;
     server_poll_fd.fd = server_fd;
