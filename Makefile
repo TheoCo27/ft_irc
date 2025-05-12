@@ -3,18 +3,6 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: theog <theog@student.42.fr>                +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/04/30 20:51:03 by theog             #+#    #+#              #
-#    Updated: 2025/04/30 20:51:06 by theog            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
 #    By: user <marvin@42.fr>                        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/30                              #+#    #+#              #
@@ -30,7 +18,8 @@ CXXFLAGS    := -Wall -Wextra -Werror -std=c++98 -Iincludes
 SRC_DIR     := src
 OBJ_DIR     := obj
 
-SRC_FILES   := main.cpp server.cpp client.cpp channel.cpp
+SRC_FILES   := main.cpp server.cpp
+#server.cpp client.cpp channel.cpp
 SRC         := $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ         := $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.cpp=.o))
 
