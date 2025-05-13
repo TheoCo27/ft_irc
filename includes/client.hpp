@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/12 18:44:35 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/13 22:03:46 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,30 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <poll.h>
+#include <algorithm>
+#include <sys/socket.h>
+
+enum ClientStatus
+{
+	UNAUTHORIZED,
+	AUTHORIZED,
+	CONNECTED,
+	DISCONNECTED
+};
 
 class Client
 {
-	int client_fd;
-	struct sockaddr_in client_addr;
-	std::vector<struct pollfd> poll_fds;
+private:
+	std::string _nickname;
+	std::string _username;
 public:
-	Client(int client_fd, struct sockaddr_in client_addr);
+	int status;	
+	int _client_fd;
+	struct pollfd poll_fd;
+	Client(int client_fd);
 	~Client();
-	void init();
-	void sendMessage(const std::string& message);
-	std::string receiveMessage();
-	void closeClient();
+	// void init();
+	// void sendMessage(const std::string& message);
+	// std::string receiveMessage();
+	//void closeClient();
 };

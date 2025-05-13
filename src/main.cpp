@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/12 20:23:14 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/13 17:51:05 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 
 int main(int argc, char** argv)
 {
-	if (argc != 2) {
-		std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;
+	if (argc != 3) {
+		std::cerr << "Usage: " << argv[0] << " <port>  <password> " << std::endl;
 		return EXIT_FAILURE;
 	}
 	int port = atoi(argv[1]);
@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 		std::cerr << "Port must be between 1 and 65535." << std::endl;
 		return EXIT_FAILURE;
 	}
-	Server server(port);
+	Server server(port, argv[2]);
 	server.init();
 	server.start();
 	return EXIT_SUCCESS;
