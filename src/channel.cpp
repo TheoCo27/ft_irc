@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 17:20:26 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 17:24:42 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void Channel::addClient(Client* client)
     welcome.append(this->name);
     welcome.append(" channel\n");
     sendMessage(client->_client_fd, welcome);
+    std::string joined = client->_username + " has joined channel\n";
+    sendMessageToAllClients(joined, client);
 }
 
 int Channel::get_client_index(Client *client)
@@ -47,6 +49,8 @@ void Channel::removeClient(Client* client)
         return;
     clients.erase(clients.begin() + index);
     nb_client--;
+    std:: string left = client->_username + " has left channel\n";
+    sendMessageToAllClients(left, NULL);
 }
 
 void Channel::sendMessageToAllClients(const std::string& message, Client *client)

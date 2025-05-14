@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:33:35 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 17:31:16 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ class Channel
 	private:
 		std::string name;
 		std::vector<Client*> clients;
-		int nb_client;
 	public:
+		int nb_client;
 		Channel(std::string name);
 		~Channel();
 		void addClient(Client* client);

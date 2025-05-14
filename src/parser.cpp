@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/05/14 16:45:05 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 17:41:54 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,12 @@ bool startsWith(const std::string& input, const std::string& prefix) {
 
 bool is_cmd(std::string str)
 {
-    std::string tab_cmd[1];
-
-    tab_cmd[0] = "/join";
 
     for(int i = 0; i < 1; i++)
     {
-        if (startsWith(str, tab_cmd[i]) == true)
+        if (startsWith(str, "/join") == true)
+            return(true);
+        if (startsWith(str, "/leave") == true)
             return(true);
     }
     return(false);
@@ -81,10 +80,29 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
     }
 }
 
+void leave(Client *client, std::vector<Channel*>& channels)
+{
+    if (client->status == CONNECTED)
+        return;
+    std::string channel_name = client->channel_name;
+    int i = get_channel_index(channel_name, channels);
+    if (i != -1)
+    {
+        channels[i]->removeClient(client);
+        client->channel_name = "";
+        client->status = CONNECTED;
+        if (channels[i]->nb_client <= 0)
+            channels.erase(channels.begin() + i);
+        std::cout << client->_username << "has left " << channel_name << std::endl;
+    }
+}
+
 void make_command(std::string cmd, Client *client, std::vector<Client*>& client_tab, std::vector<Channel*>& channels)
 {
     std::cout << "inside Make_command\n";
     if (startsWith(cmd, "/join"))
         join(cmd, client, channels);
+    if (startsWith(cmd, "/leave"))
+        leave(client, channels);
     (void)client_tab;
 }
