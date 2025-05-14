@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:45:49 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 17:20:26 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,20 @@ void Channel::removeClient(Client* client)
 
 void Channel::sendMessageToAllClients(const std::string& message, Client *client)
 {
+    std::string from;
+    if (client != NULL)
+    {
+        from = "From ";
+        from.append(client->_username);
+        from.append(": ");
+        from.append(message);
+    }
     for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
     {
         Client* ptr = *it;
         if (client != NULL && client != ptr)
+            send(ptr->_client_fd, from.c_str(), from.size(), 0);
+        else if(client == NULL)
             send(ptr->_client_fd, message.c_str(), message.size(), 0);
     }
 }

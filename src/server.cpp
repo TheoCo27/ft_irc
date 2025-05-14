@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:33:50 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 17:01:02 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,13 @@ void Server::get_password(Client* client)
 		client->status = AUTHORIZED;
 }
 
+void Server::get_username(Client* client)
+{
+	sendMessage(client->_client_fd, "Please type username!\n");
+	std::string to_check = trim(receiveMessage(client->_client_fd));
+	client->_username = to_check;
+}
+
 void Server::acceptClient()
 {
 	int client_fd = accept(this->server_fd, NULL, NULL);
@@ -141,6 +148,7 @@ void Server::acceptClient()
 	get_password(client);
 
 	if (client->status == AUTHORIZED) {
+		get_username(client);
 		client->status = CONNECTED;
 		sendMessage(client_fd, "Welcome to the server!\n");
 		std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;

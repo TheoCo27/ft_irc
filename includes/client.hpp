@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:07:24 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:59:53 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ class Client
 {
 private:
 	std::string _nickname;
-	std::string _username;
 public:
+	std::string _username;
 	int status;	
 	int _client_fd;
 	std::string channel_name;

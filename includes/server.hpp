@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:07:33 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:57:55 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ public:
 	void removeChannel(std::string name);
 	int get_channel_index(std::string name);
 	void inputs_manager(char buffer[BUFFER_SIZE], int client_fd);
-
+	void get_username(Client *client);
 
 };
 
