@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/13 22:39:17 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/14 04:21:45 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/server.hpp"
-
-#define BUFFER_SIZE 5000
-
 
 // Functor C++98 compatible
 struct MatchClientFd {
@@ -154,6 +151,21 @@ void Server::acceptClient()
 	}
 }
 
+void    Server::inputs_manager(char buffer[BUFFER_SIZE], int client_fd)
+{
+    std::string inputs(buffer);
+	Client* client = get_client_by_fd(this->clients, client_fd);
+    if (is_cmd(inputs))
+    {
+
+    }
+	else if (client->status == IN_CHANNEL)
+	{
+		int i = get_channel_index(client->channel_name);
+		channels[i]->sendMessageToAllClients(inputs);
+	}
+}
+
 void Server::handleClient(int client_fd)
 {
 	char buffer[BUFFER_SIZE];
@@ -198,29 +210,44 @@ void Server::removeClient(int client_fd)
 		this->clients.erase(it);
 	}
 }
-void Server::disconnectClient(int client_fd)
+
+
+void Server::addChannel(std::string name)
 {
-    // Trouver le client correspondant dans la liste des clients
-    std::vector<Client*>::iterator it = std::find_if(this->clients.begin(), this->clients.end(),
-        MatchClientPtr(client_fd));  // Utilisation du functor pour trouver le client
+	Channel *channel = new Channel(name);
 
-    if (it != this->clients.end()) {
-        Client* client = *it;
-
-        // Fermer la connexion du client
-        close(client->_client_fd);
-        std::cout << "❌ Client déconnecté (fd: " << client->_client_fd << ")" << std::endl;
-
-        // Supprimer le client de la liste des clients
-        this->clients.erase(it);
-
-        // Supprimer l'entrée dans poll_fds
-        this->poll_fds.erase(std::remove_if(this->poll_fds.begin(), this->poll_fds.end(),
-            MatchClientFd(client_fd)), this->poll_fds.end());
-
-        // Libérer la mémoire allouée pour le client
-        delete client;
-    } else {
-        std::cerr << "Client avec fd " << client_fd << " non trouvé." << std::endl;
-    }
+	channels.push_back(channel);
 }
+
+int Server::get_channel_index(std::string name)
+{
+	for (int i = 0; i < channels.size(); ++i) 
+	{
+        if (channels[i] && channels[i]->getName() == name) {
+            return (i);
+        }
+    }
+    return (-1); // pas trouvé
+}
+
+void Server::removeChannel(std::string name)
+{
+	int index = get_channel_index(name);
+    if (index == -1)
+        return;
+    channels.erase(channels.begin() + index);
+}
+
+Client* get_client_by_fd(std::vector<Client*>& clients, int fd) {
+    std::vector<Client*>::iterator it = std::find_if(
+        clients.begin(), clients.end(), MatchClientPtr(fd)
+    );
+
+    if (it != clients.end()) {
+        return *it; // adresse du client trouvé
+    }
+    return NULL; // pas trouvé
+}
+
+std::vector<Client*> Server::get_clients(void){return (clients);}
+std::vector<Channel*> Server::get_channels(void){return(channels);}

@@ -1,25 +1,15 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   client.cpp                                         :+:      :+:    :+:   */
+/*   join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 03:56:51 by theog            ###   ########.fr       */
+/*   Created: 2025/05/14 03:02:31 by theog             #+#    #+#             */
+/*   Updated: 2025/05/14 03:03:44 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/client.hpp"
+#include "../includes/join.hpp"
 
-Client::Client(int client_fd)
-{
-	this->_client_fd = client_fd;
-	this->poll_fd.fd = client_fd;
-	this->poll_fd.events = POLLIN;
-	this->poll_fd.revents = 0;
-	this->_nickname = "iencli";
-	this->_username = "iencli42";
-	this->status = UNAUTHORIZED;
-}
-Client::~Client(){}
+

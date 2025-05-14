@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/13 22:03:46 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/14 04:05:17 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ enum ClientStatus
 	UNAUTHORIZED,
 	AUTHORIZED,
 	CONNECTED,
+	IN_CHANNEL,
 	DISCONNECTED
 };
 
@@ -39,6 +40,7 @@ private:
 public:
 	int status;	
 	int _client_fd;
+	std::string channel_name;
 	struct pollfd poll_fd;
 	Client(int client_fd);
 	~Client();
