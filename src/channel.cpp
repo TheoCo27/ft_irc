@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:33:14 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:45:49 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@ void Channel::addClient(Client* client)
 {
     nb_client++;
     clients.push_back(client);
+    std::string welcome = "Welcome to ";
+    welcome.append(this->name);
+    welcome.append(" channel\n");
+    sendMessage(client->_client_fd, welcome);
 }
 
 int Channel::get_client_index(Client *client)

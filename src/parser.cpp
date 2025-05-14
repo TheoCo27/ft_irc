@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/05/14 16:20:50 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:45:05 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ std::string trim_cmd(std::string str)
     while(str[i] && str[i] == ' ')
         i++;
     str.erase(0, i);
+    str.erase(str.length() - 1, 1);
     return (str);
 }
 
@@ -76,7 +77,7 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
         new_channel->addClient(client);
         client->channel_name = channel_name;
         client->status = IN_CHANNEL;
-        std::cout << "Channel " << channel_name << "created\n";
+        std::cout << "Channel " << channel_name << " created\n";
     }
 }
 
