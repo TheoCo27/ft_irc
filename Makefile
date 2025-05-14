@@ -18,7 +18,7 @@ CXXFLAGS    := -Wall -Wextra -Werror -std=c++98 -Iincludes
 SRC_DIR     := src
 OBJ_DIR     := obj
 
-SRC_FILES   := main.cpp server.cpp client.cpp channel.cpp
+SRC_FILES   := main.cpp server.cpp client.cpp channel.cpp parser.cpp
 #server.cpp client.cpp channel.cpp
 SRC         := $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJ         := $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.cpp=.o))

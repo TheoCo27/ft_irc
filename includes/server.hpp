@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 04:11:46 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:07:33 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
  #include "channel.hpp"
  #include "parser.hpp"
 
-#define BUFFER_SIZE 5000
 
 class Server
 {

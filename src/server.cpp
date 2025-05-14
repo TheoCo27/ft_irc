@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 04:21:45 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:33:50 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,12 +157,12 @@ void    Server::inputs_manager(char buffer[BUFFER_SIZE], int client_fd)
 	Client* client = get_client_by_fd(this->clients, client_fd);
     if (is_cmd(inputs))
     {
-
+		make_command(inputs, client, this->clients, this->channels);
     }
 	else if (client->status == IN_CHANNEL)
 	{
 		int i = get_channel_index(client->channel_name);
-		channels[i]->sendMessageToAllClients(inputs);
+		channels[i]->sendMessageToAllClients(inputs, client);
 	}
 }
 
@@ -177,6 +177,7 @@ void Server::handleClient(int client_fd)
 	} else {
 		buffer[bytes] = '\0';
 		std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
+		inputs_manager(buffer, client_fd);
 	}
 }
 
@@ -221,10 +222,10 @@ void Server::addChannel(std::string name)
 
 int Server::get_channel_index(std::string name)
 {
-	for (int i = 0; i < channels.size(); ++i) 
+	for (size_t i = 0; i < channels.size(); ++i) 
 	{
         if (channels[i] && channels[i]->getName() == name) {
-            return (i);
+            return (static_cast<int>(i));
         }
     }
     return (-1); // pas trouvé

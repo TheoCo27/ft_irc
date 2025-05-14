@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 04:05:17 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:07:24 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <poll.h>
 #include <algorithm>
 #include <sys/socket.h>
+#define BUFFER_SIZE 5000
 
 enum ClientStatus
 {
@@ -44,6 +45,8 @@ public:
 	struct pollfd poll_fd;
 	Client(int client_fd);
 	~Client();
+	void sendMessage(int client_fd, const std::string& message);
+	std::string receiveMessage(int client_fd);
 	// void init();
 	// void sendMessage(const std::string& message);
 	// std::string receiveMessage();

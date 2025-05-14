@@ -6,12 +6,11 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/05/14 04:19:00 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/14 16:20:50 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/parser.hpp"
-#include "../includes/server.hpp"
 
 
 
@@ -36,9 +35,55 @@ bool is_cmd(std::string str)
     return(false);
 }
 
-int get_cmd_index()
-
-void make_command(std::string cmd, Client *client, std::vector<Client*> client_tab, std::vector<Channel*> channels)
+std::string trim_cmd(std::string str)
 {
-    
+    int i = 0;
+    while(str[i] && str[i] != ' ')
+        i++;
+    while(str[i] && str[i] == ' ')
+        i++;
+    str.erase(0, i);
+    return (str);
+}
+
+int get_channel_index(std::string name, std::vector<Channel*> channels)
+{
+	for (size_t i = 0; i < channels.size(); ++i) 
+	{
+        if (channels[i] && channels[i]->getName() == name) {
+            return static_cast<int>(i);
+        }
+    }
+    return (-1); // pas trouvé
+}
+
+void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
+{
+    std::cout << "inside join\n";
+    std::string channel_name = trim_cmd(cmd);
+    int i = get_channel_index(channel_name, channels);
+    if (i != -1)
+    {
+        channels[i]->addClient(client);
+        client->channel_name = channel_name;
+        client->status = IN_CHANNEL;
+        std::cout << "client fd " << client->_client_fd << "has joined " << channel_name << std::endl;
+    }
+    else
+    {
+        Channel *new_channel = new Channel(channel_name);
+        channels.push_back(new_channel);
+        new_channel->addClient(client);
+        client->channel_name = channel_name;
+        client->status = IN_CHANNEL;
+        std::cout << "Channel " << channel_name << "created\n";
+    }
+}
+
+void make_command(std::string cmd, Client *client, std::vector<Client*>& client_tab, std::vector<Channel*>& channels)
+{
+    std::cout << "inside Make_command\n";
+    if (startsWith(cmd, "/join"))
+        join(cmd, client, channels);
+    (void)client_tab;
 }
