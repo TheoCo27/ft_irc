@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 17:01:02 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/15 17:48:32 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ struct MatchClientPtr {
 	int client_fd;
 	MatchClientPtr(int fd) : client_fd(fd) {}
 	bool operator()(Client* c) const {
-		return c->_client_fd == client_fd;
+		return c->getClientFd() == client_fd;
 	}
 };
 
@@ -115,18 +115,18 @@ bool Server::check_password(std::string str)
 
 void Server::get_password(Client* client)
 {
-	sendMessage(client->_client_fd, "Please type password!\n");
-	std::string to_check = trim(receiveMessage(client->_client_fd));
+	sendMessage(client->getClientFd(), "Please type password!\n");
+	std::string to_check = trim(receiveMessage(client->getClientFd()));
 
 	if (check_password(to_check))
-		client->status = AUTHORIZED;
+		client->setStatus(AUTHORIZED);
 }
 
 void Server::get_username(Client* client)
 {
-	sendMessage(client->_client_fd, "Please type username!\n");
-	std::string to_check = trim(receiveMessage(client->_client_fd));
-	client->_username = to_check;
+	sendMessage(client->getClientFd(), "Please type username!\n");
+	std::string to_check = trim(receiveMessage(client->getClientFd()));
+	client->setUsername(to_check);
 }
 
 void Server::acceptClient()
@@ -138,18 +138,19 @@ void Server::acceptClient()
 	}
 
 	Client* client = new Client(client_fd);
-	client->poll_fd.fd = client_fd;
-	client->poll_fd.events = POLLIN;
-	client->poll_fd.revents = 0;
+	struct pollfd poll_fd = client->getPollFd();
+	poll_fd.fd = client_fd;
+	poll_fd.events = POLLIN;
+	poll_fd.revents = 0;
 
 	this->clients.push_back(client);
-	this->poll_fds.push_back(client->poll_fd);
+	this->poll_fds.push_back(client->getPollFd());
 
 	get_password(client);
 
-	if (client->status == AUTHORIZED) {
+	if (client->getStatus() == AUTHORIZED) {
 		get_username(client);
-		client->status = CONNECTED;
+		client->setStatus(CONNECTED);
 		sendMessage(client_fd, "Welcome to the server!\n");
 		std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
 	} else {
@@ -167,9 +168,9 @@ void    Server::inputs_manager(char buffer[BUFFER_SIZE], int client_fd)
     {
 		make_command(inputs, client, this->clients, this->channels);
     }
-	else if (client->status == IN_CHANNEL)
+	else if (client->getStatus() == IN_CHANNEL)
 	{
-		int i = get_channel_index(client->channel_name);
+		int i = get_channel_index(client->getChannelName());
 		channels[i]->sendMessageToAllClients(inputs, client);
 	}
 }

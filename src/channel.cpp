@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 17:24:42 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/15 16:14:06 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,17 @@ Channel::~Channel()
 void Channel::addClient(Client* client)
 {
     nb_client++;
-    clients.push_back(client);
     std::string welcome = "Welcome to ";
     welcome.append(this->name);
     welcome.append(" channel\n");
-    sendMessage(client->_client_fd, welcome);
-    std::string joined = client->_username + " has joined channel\n";
+    sendMessage(client->getClientFd(), welcome);
+    std::string joined = client->getUsername() + " has joined channel\n";
     sendMessageToAllClients(joined, client);
+	clients.push_back(client);
 }
 
-int Channel::get_client_index(Client *client)
+int Channel::get_client_index(Client *client
+)
 {
     std::vector<Client*>::iterator it = std::find(clients.begin(), clients.end(), client);
     if (it != clients.end()) {
@@ -49,7 +50,7 @@ void Channel::removeClient(Client* client)
         return;
     clients.erase(clients.begin() + index);
     nb_client--;
-    std:: string left = client->_username + " has left channel\n";
+    std:: string left = client->getUsername() + " has left channel\n";
     sendMessageToAllClients(left, NULL);
 }
 
@@ -59,7 +60,7 @@ void Channel::sendMessageToAllClients(const std::string& message, Client *client
     if (client != NULL)
     {
         from = "From ";
-        from.append(client->_username);
+        from.append(client->getUsername());
         from.append(": ");
         from.append(message);
     }
@@ -67,9 +68,9 @@ void Channel::sendMessageToAllClients(const std::string& message, Client *client
     {
         Client* ptr = *it;
         if (client != NULL && client != ptr)
-            send(ptr->_client_fd, from.c_str(), from.size(), 0);
+            send(ptr->getClientFd(), from.c_str(), from.size(), 0);
         else if(client == NULL)
-            send(ptr->_client_fd, message.c_str(), message.size(), 0);
+            send(ptr->getClientFd(), message.c_str(), message.size(), 0);
     }
 }
 
