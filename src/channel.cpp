@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 16:14:06 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/15 18:36:06 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,9 @@ std::string Channel::receiveMessage(int client_fd)
 	buffer[bytes] = '\0';
 	return std::string(buffer);
 }
+//getters
 std::string Channel::getName() const{ return (name);}
-std::vector<Client*> Channel::getClients() const{return (clients);}
+int Channel::getNbClient() const{return (nb_client);}
+//settters
+void Channel::setName(const std::string& name){this->name = name;}
+void Channel::setNbClient(int nb_client){this->nb_client = nb_client;}

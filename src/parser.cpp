@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/05/15 17:48:12 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/15 18:36:45 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void leave(Client *client, std::vector<Channel*>& channels)
         channels[i]->removeClient(client);
         client->setChannelName("");;
         client->setStatus(CONNECTED);
-        if (channels[i]->nb_client <= 0)
+        if (channels[i]->getNbClient() <= 0)
             channels.erase(channels.begin() + i);
         std::cout << client->getUsername() << " has left " << channel_name << std::endl;
     }

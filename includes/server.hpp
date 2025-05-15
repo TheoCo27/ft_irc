@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/14 16:57:55 by theog            ###   ########.fr       */
+/*   Updated: 2025/05/15 17:53:27 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 class Server
 {
+private:
 	int server_fd;
 	int port;
 	const std::string password;
@@ -41,7 +42,6 @@ public:
 	bool check_password(std::string str);
 	void get_password(Client *client);
 	void removeClient(int client_fd);
-	void disconnectClient(int client_fd);
 	void addChannel(std::string name);
 	void removeChannel(std::string name);
 	int get_channel_index(std::string name);
