@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 21:26:50 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/15 21:29:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,16 +121,6 @@ void Server::acceptClient() {
 		return;
 	}
 	sendMessage(client_fd, "Please type server password!\n");
-	// get_password(client);
-	// if (client->getStatus() == WAITING_USERNAME) {
-	// 	get_username(client);
-	// 	client->setStatus(CONNECTED);
-	// 	sendMessage(client_fd, "Welcome to the server!\n");
-	// 	std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
-	// } else {
-	// 	sendMessage(client_fd, "Wrong password!\nConnexion has been closed.\n");
-	// 	closeClient(client_fd);
-	// }
 }
 
 void Server::handleClient(int client_fd) {
