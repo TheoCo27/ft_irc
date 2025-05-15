@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 16:38:20 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/15 21:22:13 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,10 @@
 Client::Client(int client_fd)
 {
 	this->_client_fd = client_fd;
-	this->poll_fd.fd = client_fd;
-	this->poll_fd.events = POLLIN;
-	this->poll_fd.revents = 0;
 	this->_nickname = "iencli";
 	this->_username = "iencli42";
-	this->status = UNAUTHORIZED;
+	this->status = WAITING_PASSWORD;
+	this->channel_name = "";
 }
 Client::~Client(){}
 
@@ -55,9 +53,6 @@ int Client::getClientFd() const{
 std::string Client::getChannelName() const{
 	return this->channel_name;
 }
-struct pollfd& Client::getPollFd(){
-	return this->poll_fd;
-}
 
 //setters
 void Client::setNickname(const std::string& nickname){
@@ -74,7 +69,4 @@ void Client::setClientFd(int client_fd){
 }
 void Client::setChannelName(const std::string& channel_name){
 	this->channel_name = channel_name;
-}
-void Client::setPollFd(struct pollfd poll_fd){
-	this->poll_fd = poll_fd;
 }

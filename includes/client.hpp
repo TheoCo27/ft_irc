@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 16:37:55 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/05/15 21:13:23 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,9 @@
 
 enum ClientStatus
 {
-	UNAUTHORIZED,
-	AUTHORIZED,
+	WAITING_PASSWORD,
+	WAITING_USERNAME,
+	WAITING_NICKNAME,
 	CONNECTED,
 	IN_CHANNEL,
 	DISCONNECTED
@@ -41,29 +42,26 @@ private:
 	int status;	
 	int _client_fd;
 	std::string channel_name;
-	struct pollfd poll_fd;
+
 public:
 	Client(int client_fd);
 	~Client();
-	//getters
+
+	// Getters
 	std::string getNickname() const;
 	std::string getUsername() const;
 	int getStatus() const;
 	int getClientFd() const;
 	std::string getChannelName() const;
-	struct pollfd& getPollFd();
-	//setters
+
+	// Setters
 	void setNickname(const std::string& nickname);
 	void setUsername(const std::string& username);
 	void setStatus(int status);
 	void setClientFd(int client_fd);
 	void setChannelName(const std::string& channel_name);
-	void setPollFd(struct pollfd poll_fd);
-	//methods
+
+	// Méthodes
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
-	// void init();
-	// void sendMessage(const std::string& message);
-	// std::string receiveMessage();
-	//void closeClient();
 };
