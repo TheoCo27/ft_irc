@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 21:23:17 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/06/16 16:19:58 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "client.hpp"
 #include "channel.hpp"
 #include "parser.hpp"
-#include <sys/epoll.h>
+//#include <sys/epoll.h>
 #include <vector>
 #include <string>
 #include <netinet/in.h>
@@ -29,7 +29,6 @@ private:
 	int port;                            // port du serveur
 	const std::string password;          // mot de passe
 	struct sockaddr_in server_addr;      // struct adresse serveur
-
 	std::vector<Client*> clients;        // liste des clients connectés
 	std::vector<Channel*> channels;      // liste des channels IRC
 
@@ -49,6 +48,7 @@ public:
 	void removeClient(int client_fd);
 
 	// Communication
+	void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message);
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
 
@@ -66,8 +66,8 @@ public:
 	int get_channel_index(std::string name);
 
 	// Getters
-	std::vector<Client*> get_clients(void);
-	std::vector<Channel*> get_channels(void);
+	std::vector<Client*>& get_clients(void);
+	std::vector<Channel*>& get_channels(void);
 };
 
 // Fonction utilitaire externe

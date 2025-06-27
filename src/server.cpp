@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 21:29:47 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/06/16 16:18:52 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,22 +134,22 @@ void Server::handleClient(int client_fd) {
 	buffer[bytes] = '\0';
 	std::string input = trim(std::string(buffer));
 	Client *client = get_client_by_fd(this->clients, client_fd);
-	if (client->getStatus() == WAITING_PASSWORD) {
-		if (check_password(input)) {
-			client->setStatus(WAITING_USERNAME);
-			sendMessage(client_fd, "Password OK. Please type username:\n");
-		} else {
-			sendMessage(client_fd, "Wrong password. Connection closed.\n");
-			closeClient(client_fd);
-			removeClient(client_fd);
-		}
-	}
-	else if (client->getStatus() == WAITING_USERNAME) {
-		client->setUsername(input);
-		client->setStatus(CONNECTED);
-		sendMessage(client_fd, "Welcome to the server!\n");
-		std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
-	}
+	// if (client->getStatus() == WAITING_PASSWORD) {
+	// 	if (check_password(input)) {
+	// 		client->setStatus(WAITING_USERNAME);
+	// 		sendMessage(client_fd, "Password OK. Please type username:\n");
+	// 	} else {
+	// 		sendMessage(client_fd, "Wrong password. Connection closed.\n");
+	// 		closeClient(client_fd);
+	// 		removeClient(client_fd);
+	// 	}
+	// }
+	// else if (client->getStatus() == WAITING_USERNAME) {
+	// 	client->setUsername(input);
+	// 	client->setStatus(CONNECTED);
+	// 	sendMessage(client_fd, "Welcome to the server!\n");
+	// 	std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
+	// }
 	else {
 		std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
 		inputs_manager(buffer, client_fd);
@@ -205,7 +205,7 @@ void Server::inputs_manager(char buffer[BUFFER_SIZE], int client_fd) {
 	std::string inputs(buffer);
 	Client* client = get_client_by_fd(this->clients, client_fd);
 	if (is_cmd(inputs)) {
-		make_command(inputs, client, this->clients, this->channels);
+		make_command(inputs, client, this);
 	} else if (client->getStatus() == IN_CHANNEL) {
 		int i = get_channel_index(client->getChannelName());
 		channels[i]->sendMessageToAllClients(inputs, client);
@@ -239,8 +239,8 @@ void Server::removeChannel(std::string name) {
 	channels.erase(channels.begin() + index);
 }
 
-std::vector<Client*> Server::get_clients(void) { return clients; }
-std::vector<Channel*> Server::get_channels(void) { return channels; }
+std::vector<Client*>& Server::get_clients(void) { return clients; }
+std::vector<Channel*>& Server::get_channels(void) { return channels; }
 
 std::string trim(const std::string& str) {
 	size_t start = str.find_first_not_of(" \r\n\t");
@@ -248,4 +248,16 @@ std::string trim(const std::string& str) {
 	if (start == std::string::npos || end == std::string::npos)
 		return "";
 	return str.substr(start, end - start + 1);
+}
+
+void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message) {
+    std::ostringstream response;
+    response << ":server " << replyCode << " " << nickname << " " << message << "\r\n";
+
+    std::string responseStr = response.str();
+    if (send(clientSocket, responseStr.c_str(), responseStr.size(), 0) == -1) {
+        std::cerr << "Failed to send reply to client: " << clientSocket << std::endl;
+    } else {
+        std::cout << "Sent: " << responseStr;
+    }
 }

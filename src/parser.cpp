@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/05/15 18:36:45 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/06/28 00:08:09 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@ bool is_cmd(std::string str)
 
     for(int i = 0; i < 1; i++)
     {
+        if (startsWith(str, "PASS") == true)
+            return(true);
+        if (startsWith(str, "NICK") == true)
+            return(true);
+        if (startsWith(str, "USER") == true)
+            return(true);
         if (startsWith(str, "/join") == true)
             return(true);
         if (startsWith(str, "/leave") == true)
@@ -97,12 +103,46 @@ void leave(Client *client, std::vector<Channel*>& channels)
     }
 }
 
-void make_command(std::string cmd, Client *client, std::vector<Client*>& client_tab, std::vector<Channel*>& channels)
+void pass(std::string cmd, Client *client, Server* server)
+{
+    std::string input(cmd);
+
+	if (client->getStatus() == WAITING_PASSWORD) {
+		if (server->check_password(input)) {
+			client->setStatus(WAITING_NICKNAME);
+			server->sendMessage(client->getClientFd(), "Password OK. Please type nickname:\n");
+		} else {
+			server->sendMessage(client->getClientFd(), "Wrong password. Connection closed.\n");
+			server->closeClient(client->getClientFd());
+			server->removeClient(client->getClientFd());
+		}
+	}
+}
+
+void make_command(std::string cmd, Client *client, Server* server)
 {
     std::cout << "inside Make_command\n";
     if (startsWith(cmd, "/join"))
-        join(cmd, client, channels);
+        join(cmd, client, server->get_channels());
     if (startsWith(cmd, "/leave"))
-        leave(client, channels);
-    (void)client_tab;
+        leave(client, server->get_channels());
+    if (startsWith(cmd, "PASS"))
+        pass(cmd, client, server);
 }
+
+	// if (client->getStatus() == WAITING_PASSWORD) {
+	// 	if (check_password(input)) {
+	// 		client->setStatus(WAITING_USERNAME);
+	// 		sendMessage(client_fd, "Password OK. Please type username:\n");
+	// 	} else {
+	// 		sendMessage(client_fd, "Wrong password. Connection closed.\n");
+	// 		closeClient(client_fd);
+	// 		removeClient(client_fd);
+	// 	}
+	// }
+	// else if (client->getStatus() == WAITING_USERNAME) {
+	// 	client->setUsername(input);
+	// 	client->setStatus(CONNECTED);
+	// 	sendMessage(client_fd, "Welcome to the server!\n");
+	// 	std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
+	// }
