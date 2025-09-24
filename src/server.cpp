@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/06/16 16:18:52 by theog            ###   ########.fr       */
+/*   Updated: 2025/09/24 15:58:33 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/server.hpp"
+#include "../includes/parser.hpp"
 #include <sys/epoll.h>
 
 #define MAX_EVENTS 1024
@@ -133,7 +134,7 @@ void Server::handleClient(int client_fd) {
 	}
 	buffer[bytes] = '\0';
 	std::string input = trim(std::string(buffer));
-	Client *client = get_client_by_fd(this->clients, client_fd);
+	//Client *client = get_client_by_fd(this->clients, client_fd);
 	// if (client->getStatus() == WAITING_PASSWORD) {
 	// 	if (check_password(input)) {
 	// 		client->setStatus(WAITING_USERNAME);
@@ -150,10 +151,10 @@ void Server::handleClient(int client_fd) {
 	// 	sendMessage(client_fd, "Welcome to the server!\n");
 	// 	std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
 	// }
-	else {
-		std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
-		inputs_manager(buffer, client_fd);
-	}
+	//else {
+	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
+	inputs_manager(buffer, client_fd);
+	//}
 }
 
 void Server::closeClient(int client_fd) {
@@ -250,14 +251,14 @@ std::string trim(const std::string& str) {
 	return str.substr(start, end - start + 1);
 }
 
-void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message) {
-    std::ostringstream response;
-    response << ":server " << replyCode << " " << nickname << " " << message << "\r\n";
+// void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message) {
+//     std::ostringstream response;
+//     response << ":server " << replyCode << " " << nickname << " " << message << "\r\n";
 
-    std::string responseStr = response.str();
-    if (send(clientSocket, responseStr.c_str(), responseStr.size(), 0) == -1) {
-        std::cerr << "Failed to send reply to client: " << clientSocket << std::endl;
-    } else {
-        std::cout << "Sent: " << responseStr;
-    }
-}
+//     std::string responseStr = response.str();
+//     if (send(clientSocket, responseStr.c_str(), responseStr.size(), 0) == -1) {
+//         std::cerr << "Failed to send reply to client: " << clientSocket << std::endl;
+//     } else {
+//         std::cout << "Sent: " << responseStr;
+//     }
+// }

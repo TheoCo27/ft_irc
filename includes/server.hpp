@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/06/16 16:19:58 by theog            ###   ########.fr       */
+/*   Updated: 2025/09/24 15:53:54 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "client.hpp"
 #include "channel.hpp"
 #include "parser.hpp"
-//#include <sys/epoll.h>
+#include <sys/epoll.h>
 #include <vector>
 #include <string>
 #include <netinet/in.h>
@@ -48,7 +48,7 @@ public:
 	void removeClient(int client_fd);
 
 	// Communication
-	void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message);
+	//void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message);
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
 

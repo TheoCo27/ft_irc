@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/06/28 00:08:09 by theog            ###   ########.fr       */
+/*   Updated: 2025/09/24 17:32:53 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ bool is_cmd(std::string str)
             return(true);
         if (startsWith(str, "USER") == true)
             return(true);
-        if (startsWith(str, "/join") == true)
+        if (startsWith(str, "JOIN") == true)
             return(true);
-        if (startsWith(str, "/leave") == true)
+        if (startsWith(str, "LEAVE") == true)
             return(true);
     }
     return(false);
@@ -105,12 +105,12 @@ void leave(Client *client, std::vector<Channel*>& channels)
 
 void pass(std::string cmd, Client *client, Server* server)
 {
-    std::string input(cmd);
+    std::string input = trim_cmd(cmd);
 
 	if (client->getStatus() == WAITING_PASSWORD) {
 		if (server->check_password(input)) {
-			client->setStatus(WAITING_NICKNAME);
-			server->sendMessage(client->getClientFd(), "Password OK. Please type nickname:\n");
+			client->setStatus(WAITING_USERNAME);
+			server->sendMessage(client->getClientFd(), "Password OK. Please type username:\n");
 		} else {
 			server->sendMessage(client->getClientFd(), "Wrong password. Connection closed.\n");
 			server->closeClient(client->getClientFd());
@@ -119,15 +119,41 @@ void pass(std::string cmd, Client *client, Server* server)
 	}
 }
 
+void username(std::string cmd, Client *client, Server *server)
+{
+	std::string nick = trim_cmd(cmd);
+	if(client->getStatus() == WAITING_USERNAME)
+	{
+		client->setNickname(nick);
+		client->setStatus(WAITING_NICKNAME);
+		server->sendMessage(client->getClientFd(), "Please type nickname\n");
+	}
+}
+
+void nickname(std::string cmd, Client *client, Server *server)
+{
+	std::string nick = trim_cmd(cmd);
+	if(client->getStatus() == WAITING_NICKNAME)
+	{
+		client->setNickname(nick);
+		client->setStatus(CONNECTED);
+		server->sendMessage(client->getClientFd(), "Welcome to server\n");
+	}
+}
+
 void make_command(std::string cmd, Client *client, Server* server)
 {
-    std::cout << "inside Make_command\n";
-    if (startsWith(cmd, "/join"))
-        join(cmd, client, server->get_channels());
-    if (startsWith(cmd, "/leave"))
-        leave(client, server->get_channels());
-    if (startsWith(cmd, "PASS"))
-        pass(cmd, client, server);
+	std::cout << "inside Make_command\n";
+	if (startsWith(cmd, "JOIN"))
+		join(cmd, client, server->get_channels());
+	if (startsWith(cmd, "LEAVE"))
+		leave(client, server->get_channels());
+	if (startsWith(cmd, "PASS"))
+		pass(cmd, client, server);
+	if (startsWith(cmd, "NICK"))
+		nickname(cmd, client, server);
+	if (startsWith(cmd, "USER"))
+		username(cmd, client, server);
 }
 
 	// if (client->getStatus() == WAITING_PASSWORD) {
