@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/09/28 20:13:19 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/09/28 20:15:18 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,6 +144,7 @@ void Server::handleClient(int client_fd) {
 		client->setOld_buf(old_buf);
 		return;
 	}
+	
 	std::string full_msg = client->getold_buf();
 	full_msg += buffer;
 	client->setOld_buf("");
