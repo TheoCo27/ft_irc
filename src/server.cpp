@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/09/24 15:58:33 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/09/28 20:13:19 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,8 @@ void Server::acceptClient() {
 
 void Server::handleClient(int client_fd) {
 	char buffer[BUFFER_SIZE];
+	Client *client = get_client_by_fd(this->clients, client_fd);
+
 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytes <= 0) {
 		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
@@ -133,28 +135,21 @@ void Server::handleClient(int client_fd) {
 		return;
 	}
 	buffer[bytes] = '\0';
-	std::string input = trim(std::string(buffer));
-	//Client *client = get_client_by_fd(this->clients, client_fd);
-	// if (client->getStatus() == WAITING_PASSWORD) {
-	// 	if (check_password(input)) {
-	// 		client->setStatus(WAITING_USERNAME);
-	// 		sendMessage(client_fd, "Password OK. Please type username:\n");
-	// 	} else {
-	// 		sendMessage(client_fd, "Wrong password. Connection closed.\n");
-	// 		closeClient(client_fd);
-	// 		removeClient(client_fd);
-	// 	}
-	// }
-	// else if (client->getStatus() == WAITING_USERNAME) {
-	// 	client->setUsername(input);
-	// 	client->setStatus(CONNECTED);
-	// 	sendMessage(client_fd, "Welcome to the server!\n");
-	// 	std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
-	// }
-	//else {
+	if (buffer[bytes - 1] != '\n' && buffer[bytes - 2] != '\r')
+	{		std::string old_buf = client->getold_buf();
+		if (old_buf.empty())
+			old_buf = buffer;
+		else
+			old_buf += buffer;
+		client->setOld_buf(old_buf);
+		return;
+	}
+	std::string full_msg = client->getold_buf();
+	full_msg += buffer;
+	client->setOld_buf("");
 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
+	std::string input = trim(std::string(buffer));
 	inputs_manager(buffer, client_fd);
-	//}
 }
 
 void Server::closeClient(int client_fd) {

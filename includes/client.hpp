@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 21:13:23 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/09/25 14:59:46 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ private:
 	int status;	
 	int _client_fd;
 	std::string channel_name;
+	std::string old_buf;
 
 public:
 	Client(int client_fd);
@@ -53,6 +54,7 @@ public:
 	int getStatus() const;
 	int getClientFd() const;
 	std::string getChannelName() const;
+	std::string getold_buf() const;
 
 	// Setters
 	void setNickname(const std::string& nickname);
@@ -60,6 +62,7 @@ public:
 	void setStatus(int status);
 	void setClientFd(int client_fd);
 	void setChannelName(const std::string& channel_name);
+	void setOld_buf(std::string new_buf);
 
 	// Méthodes
 	void sendMessage(int client_fd, const std::string& message);

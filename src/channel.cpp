@@ -6,14 +6,22 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 18:36:06 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/09/25 15:06:50 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/channel.hpp"
 
-Channel::Channel(std::string name) : name(name), nb_client(0)
+Channel::Channel(std::string name)
 {
+	if(startsWith(name, "#") == true)
+		this->name = name;
+	else
+	{
+		std::string new_name = "#" + name;
+		this->name = new_name;
+	}
+	nb_client = 0;
 }
 
 Channel::~Channel()

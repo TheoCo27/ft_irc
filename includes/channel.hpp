@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 19:08:58 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/09/25 15:03:18 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,3 +35,5 @@ class Channel
 		void setName(const std::string& name);
 		void setNbClient(int nb_client);
 };
+
+bool startsWith(const std::string& input, const std::string& prefix);

@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/05/15 21:22:13 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/09/25 15:01:57 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Client::Client(int client_fd)
 	this->_username = "iencli42";
 	this->status = WAITING_PASSWORD;
 	this->channel_name = "";
+	this->old_buf = "";
 }
 Client::~Client(){}
 
@@ -54,6 +55,11 @@ std::string Client::getChannelName() const{
 	return this->channel_name;
 }
 
+std::string Client::getold_buf() const{
+	return this->old_buf;
+}
+
+
 //setters
 void Client::setNickname(const std::string& nickname){
 	this->_nickname = nickname;
@@ -69,4 +75,8 @@ void Client::setClientFd(int client_fd){
 }
 void Client::setChannelName(const std::string& channel_name){
 	this->channel_name = channel_name;
+}
+
+void Client::setOld_buf(std::string new_buf){
+	this->old_buf = new_buf;
 }
