@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/09/24 17:32:53 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/10/17 16:20:03 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,9 @@ int get_channel_index(std::string name, std::vector<Channel*> channels)
 void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
 {
     std::cout << "inside join\n";
-    std::string channel_name = trim_cmd(cmd);
+    std::string input_name = trim_cmd(cmd);
+	std::string channel_name = "#";
+	channel_name += input_name;
     int i = get_channel_index(channel_name, channels);
     if (i != -1)
     {
@@ -80,7 +82,7 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
         Channel *new_channel = new Channel(channel_name);
         channels.push_back(new_channel);
         new_channel->addClient(client);
-        client->setChannelName(channel_name);
+        client->setChannelName(new_channel->getName());
         client->setStatus(IN_CHANNEL);
         std::cout << "Channel " << channel_name << " created\n";
     }

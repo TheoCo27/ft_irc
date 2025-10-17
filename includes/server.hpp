@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/09/24 15:53:54 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/10/17 15:16:03 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ public:
 	void get_username(Client* client);
 
 	// Commandes / gestion des messages
-	void inputs_manager(char buffer[BUFFER_SIZE], int client_fd);
+	void inputs_manager(std::string buffer, int client_fd);
 
 	// Channels
 	void addChannel(std::string name);

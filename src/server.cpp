@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/09/28 20:15:18 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/10/17 15:54:38 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void Server::handleClient(int client_fd) {
 	client->setOld_buf("");
 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
 	std::string input = trim(std::string(buffer));
-	inputs_manager(buffer, client_fd);
+	inputs_manager(full_msg, client_fd);
 }
 
 void Server::closeClient(int client_fd) {
@@ -198,12 +198,18 @@ void Server::get_username(Client* client) {
 	client->setStatus(CONNECTED);
 }
 
-void Server::inputs_manager(char buffer[BUFFER_SIZE], int client_fd) {
+void Server::inputs_manager(std::string buffer, int client_fd) {
 	std::string inputs(buffer);
 	Client* client = get_client_by_fd(this->clients, client_fd);
 	if (is_cmd(inputs)) {
 		make_command(inputs, client, this);
 	} else if (client->getStatus() == IN_CHANNEL) {
+		std::cout << "Looking for channel : " << client->getChannelName() << std::endl;
+		for(std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+		{
+			Channel *chan = *it;
+			std::cout << chan->getName() << std::endl;
+		}
 		int i = get_channel_index(client->getChannelName());
 		channels[i]->sendMessageToAllClients(inputs, client);
 	}
