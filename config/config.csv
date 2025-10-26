@@ -1,0 +1,34 @@
+command_or_code,name,expected_format
+PASS,PASS <password>,PASS <password>
+NICK,NICK <nickname>,NICK <nickname>
+USER,USER <username> 0 * :<realname>,USER <username> 0 * :<realname>
+JOIN,JOIN #<channel> [<key>],JOIN #<channel> [<key>]
+PART,PART #<channel> [<message>],PART #<channel> [<message>]
+PRIVMSG,PRIVMSG <target> :<message>,PRIVMSG <target> :<message>
+NOTICE,NOTICE <target> :<message>,NOTICE <target> :<message>
+QUIT,QUIT [:<message>],QUIT [:<message>]
+PING,PING <server>,PING <server>
+TOPIC,TOPIC #<channel> [<topic>],TOPIC #<channel> [<topic>]
+INVITE,INVITE <nickname> #<channel>,INVITE <nickname> #<channel>
+KICK,KICK #<channel> <user> [:<comment>],KICK #<channel> <user> [:<comment>]
+MODE,MODE #<channel> <modes> [<params>],MODE #<channel> <modes> [<params>]
+---
+PASS 464,ERR_PASSWDMISMATCH,:Password incorrect
+PASS 001,RPL_WELCOME,:Welcome to the IRC Network <nick>!<user>@<host>
+NICK 433,ERR_NICKNAMEINUSE,<nickname> :Nickname is already in use
+NICK 001,RPL_WELCOME,:Welcome to the IRC Network <nick>!<user>@<host>
+USER 001,RPL_WELCOME,:Welcome to the IRC Network <nick>!<user>@<host>
+USER 461,ERR_NEEDMOREPARAMS,:Not enough parameters
+JOIN 331,RPL_NOTOPIC,#<channel> :No topic is set
+JOIN 332,RPL_TOPIC,#<channel> :<topic>
+JOIN 353,RPL_NAMREPLY,= #<channel> :<nick1> <nick2> ...
+JOIN 366,RPL_ENDOFNAMES,#<channel> :End of /NAMES list
+PRIVMSG 401,ERR_NOSUCHNICK,<nickname> :No such nick/channel
+PRIVMSG 404,ERR_CANNOTSENDTOCHAN,#<channel> :Cannot send to channel
+KICK 441,ERR_USERNOTINCHANNEL,<nickname> #<channel> :They aren't on that channel
+INVITE 443,ERR_USERONCHANNEL,<nickname> #<channel> :is already on channel
+MODE 472,ERR_UNKNOWNMODE,<char> :is unknown mode char to me
+MODE 501,ERR_UMODEUNKNOWNFLAG,:Unknown MODE flag
+TOPIC 442,ERR_NOTONCHANNEL,#<channel> :You're not on that channel
+TOPIC 331,RPL_NOTOPIC,#<channel> :No topic is set
+TOPIC 332,RPL_TOPIC,#<channel> :<topic>

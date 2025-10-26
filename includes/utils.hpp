@@ -1,16 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   join.hpp                                           :+:      :+:    :+:   */
+/*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/14 03:03:47 by theog             #+#    #+#             */
-/*   Updated: 2025/10/25 16:23:04 by tcohen           ###   ########.fr       */
+/*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
+/*   Updated: 2025/10/26 15:58:09 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "server.hpp"
+#include <string>
+#include <cctype>
 
-bool is_cmd(std::string str);
+
+bool startsWith(const std::string& input, const std::string& prefix);
+

@@ -6,12 +6,13 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/09/25 15:03:18 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/10/25 16:22:41 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "client.hpp"
+#include "utils.hpp"
 
 class Channel
 {
@@ -35,5 +36,3 @@ class Channel
 		void setName(const std::string& name);
 		void setNbClient(int nb_client);
 };
-
-bool startsWith(const std::string& input, const std::string& prefix);

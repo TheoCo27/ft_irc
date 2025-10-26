@@ -6,20 +6,11 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/10/17 16:20:03 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/10/26 15:58:00 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/parser.hpp"
-
-
-
-bool startsWith(const std::string& input, const std::string& prefix) {
-    if (input.size() < prefix.size())
-        return false;
-    return input.compare(0, prefix.size(), prefix) == 0;
-}
-
 
 bool is_cmd(std::string str)
 {
@@ -156,6 +147,8 @@ void make_command(std::string cmd, Client *client, Server* server)
 		nickname(cmd, client, server);
 	if (startsWith(cmd, "USER"))
 		username(cmd, client, server);
+	// if (startsWith(cmd, "PRIVMSG"))
+	// 	priv_msg(cmd, client, server);
 }
 
 	// if (client->getStatus() == WAITING_PASSWORD) {
