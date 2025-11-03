@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/10/26 19:28:41 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 14:53:29 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <poll.h>
 #include <algorithm>
 #include <sys/socket.h>
-#define BUFFER_SIZE 1
+#define BUFFER_SIZE 1024
 
 enum ClientStatus
 {

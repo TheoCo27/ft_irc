@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/10/17 15:54:38 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 14:31:23 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 
 #define MAX_EVENTS 1024
 
-struct MatchClientPtr {
-	int client_fd;
-	MatchClientPtr(int fd) : client_fd(fd) {}
-	bool operator()(Client* c) const {
-		return c->getClientFd() == client_fd;
-	}
-};
+// struct MatchClientPtr {
+// 	int client_fd;
+// 	MatchClientPtr(int fd) : client_fd(fd) {}
+// 	bool operator()(Client* c) const {
+// 		return c->getClientFd() == client_fd;
+// 	}
+// };
 
 Server::Server(int port, const std::string password) : password(password) {
 	this->port = port;
@@ -56,9 +56,11 @@ Server::Server(int port, const std::string password) : password(password) {
 Server::~Server() {
 	close(this->server_fd);
 	close(this->epoll_fd);
-	for (size_t i = 0; i < this->clients.size(); ++i)
-		delete this->clients[i];
-	this->clients.clear();
+	// for (size_t i = 0; i < this->clients.size(); ++i)
+	// 	delete this->clients[i];
+	for(std::map<int, Client*>::iterator it = this->clients_map.begin(); it != this->clients_map.end(); ++it)
+		delete it->second;
+	this->clients_map.clear();	
 }
 
 void Server::init() {
@@ -111,8 +113,8 @@ void Server::acceptClient() {
 	}
 	make_socket_non_blocking(client_fd);
 	Client* client = new Client(client_fd);
-	this->clients.push_back(client);
-
+	//this->clients.push_back(client);
+	this->clients_map[client_fd] = client;
 	struct epoll_event event;
 	event.events = EPOLLIN;
 	event.data.fd = client_fd;
@@ -126,8 +128,8 @@ void Server::acceptClient() {
 
 void Server::handleClient(int client_fd) {
 	char buffer[BUFFER_SIZE];
-	Client *client = get_client_by_fd(this->clients, client_fd);
-
+	//Client *client = get_client_by_fd(this->clients, client_fd);
+	Client *client = this->clients_map[client_fd];
 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytes <= 0) {
 		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
@@ -160,11 +162,12 @@ void Server::closeClient(int client_fd) {
 }
 
 void Server::removeClient(int client_fd) {
-	std::vector<Client*>::iterator it = std::find_if(this->clients.begin(), this->clients.end(), MatchClientPtr(client_fd));
-	if (it != this->clients.end()) {
-		delete *it;
-		this->clients.erase(it);
-	}
+	// std::vector<Client*>::iterator it = std::find_if(this->clients.begin(), this->clients.end(), MatchClientPtr(client_fd));
+	// if (it != this->clients.end()) {
+	// 	delete *it;
+	// 	this->clients.erase(it);
+	// }
+	this->clients_map.erase(client_fd);
 }
 
 void Server::sendMessage(int client_fd, const std::string& message) {
@@ -184,23 +187,24 @@ bool Server::check_password(std::string str) {
 	return str == this->password;
 }
 
-void Server::get_password(Client* client) {
-	sendMessage(client->getClientFd(), "Please type password!\n");
-	std::string to_check = trim(receiveMessage(client->getClientFd()));
-	if (check_password(to_check))
-		client->setStatus(WAITING_USERNAME);
-}
+// void Server::get_password(Client* client) {
+// 	sendMessage(client->getClientFd(), "Please type password!\n");
+// 	std::string to_check = trim(receiveMessage(client->getClientFd()));
+// 	if (check_password(to_check))
+// 		client->setStatus(WAITING_USERNAME);
+// }
 
-void Server::get_username(Client* client) {
-	sendMessage(client->getClientFd(), "Please type username!\n");
-	std::string to_check = trim(receiveMessage(client->getClientFd()));
-	client->setUsername(to_check);
-	client->setStatus(CONNECTED);
-}
+// void Server::get_username(Client* client) {
+// 	sendMessage(client->getClientFd(), "Please type username!\n");
+// 	std::string to_check = trim(receiveMessage(client->getClientFd()));
+// 	client->setUsername(to_check);
+// 	client->setStatus(CONNECTED);
+// }
 
 void Server::inputs_manager(std::string buffer, int client_fd) {
 	std::string inputs(buffer);
-	Client* client = get_client_by_fd(this->clients, client_fd);
+	//Client* client = get_client_by_fd(this->clients, client_fd);
+	Client* client = this->clients_map[client_fd];
 	if (is_cmd(inputs)) {
 		make_command(inputs, client, this);
 	} else if (client->getStatus() == IN_CHANNEL) {
@@ -215,12 +219,12 @@ void Server::inputs_manager(std::string buffer, int client_fd) {
 	}
 }
 
-Client* get_client_by_fd(std::vector<Client*>& clients, int fd) {
-	std::vector<Client*>::iterator it = std::find_if(clients.begin(), clients.end(), MatchClientPtr(fd));
-	if (it != clients.end())
-		return *it;
-	return NULL;
-}
+// Client* get_client_by_fd(std::vector<Client*>& clients, int fd) {
+// 	std::vector<Client*>::iterator it = std::find_if(clients.begin(), clients.end(), MatchClientPtr(fd));
+// 	if (it != clients.end())
+// 		return *it;
+// 	return NULL;
+// }
 
 void Server::addChannel(std::string name) {
 	Channel *channel = new Channel(name);
@@ -242,7 +246,7 @@ void Server::removeChannel(std::string name) {
 	channels.erase(channels.begin() + index);
 }
 
-std::vector<Client*>& Server::get_clients(void) { return clients; }
+std::map<int, Client*>& Server::get_clients_map(void) { return this->clients_map; }
 std::vector<Channel*>& Server::get_channels(void) { return channels; }
 
 std::string trim(const std::string& str) {

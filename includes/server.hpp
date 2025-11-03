@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/10/17 15:16:03 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 14:33:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <string>
 #include <netinet/in.h>
 #include <fcntl.h>
+#include <map>
 
 class Server
 {
@@ -29,7 +30,8 @@ private:
 	int port;                            // port du serveur
 	const std::string password;          // mot de passe
 	struct sockaddr_in server_addr;      // struct adresse serveur
-	std::vector<Client*> clients;        // liste des clients connectés
+	//std::vector<Client*> clients;       // liste des clients connectés
+	std::map<int, Client*> clients_map;
 	std::vector<Channel*> channels;      // liste des channels IRC
 
 public:
@@ -66,7 +68,7 @@ public:
 	int get_channel_index(std::string name);
 
 	// Getters
-	std::vector<Client*>& get_clients(void);
+	std::map<int, Client*>& get_clients_map(void);
 	std::vector<Channel*>& get_channels(void);
 };
 

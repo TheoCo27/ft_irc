@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/10/25 16:22:01 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 14:15:26 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,7 @@ void Channel::addClient(Client* client)
 	clients.push_back(client);
 }
 
-int Channel::get_client_index(Client *client
-)
+int Channel::get_client_index(Client *client)
 {
     std::vector<Client*>::iterator it = std::find(clients.begin(), clients.end(), client);
     if (it != clients.end()) {
