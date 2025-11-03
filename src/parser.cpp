@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/03 16:37:52 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 18:48:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
     }
 }
 
+//channel list upadte keep going from here
+
 void leave(Client *client, std::vector<Channel*>& channels)
 {
     if (client->getStatus() == CONNECTED)
@@ -95,6 +97,7 @@ void leave(Client *client, std::vector<Channel*>& channels)
         channels[i]->removeClient(client);
         client->setChannelName("");;
         client->setStatus(CONNECTED);
+		client->remove_channel_fromchannelList(channel_name);
         if (channels[i]->getNbClient() <= 0)
             channels.erase(channels.begin() + i);
         std::cout << client->getUsername() << " has left " << channel_name << std::endl;
@@ -119,11 +122,13 @@ void pass(std::string cmd, Client *client, Server* server)
 
 void username(std::string cmd, Client *client, Server *server)
 {
-	std::string nick = trim_cmd(cmd);
+	std::string username = trim_cmd(cmd);
+	std::vector<std::string> user_list = server->get_user_list();
 	if(client->getStatus() == WAITING_USERNAME)
 	{
-		client->setNickname(nick);
+		client->setUsername(username);
 		client->setStatus(WAITING_NICKNAME);
+		user_list.push_back(username);
 		server->sendMessage(client->getClientFd(), "Please type nickname\n");
 	}
 }
@@ -131,9 +136,11 @@ void username(std::string cmd, Client *client, Server *server)
 void nickname(std::string cmd, Client *client, Server *server)
 {
 	std::string nick = trim_cmd(cmd);
+	std::vector<std::string> nickname_list = server->get_nickname_list();
 	if(client->getStatus() == WAITING_NICKNAME)
 	{
 		client->setNickname(nick);
+		nickname_list.push_back(nick);
 		client->setStatus(CONNECTED);
 		server->sendMessage(client->getClientFd(), "Welcome to server\n");
 	}

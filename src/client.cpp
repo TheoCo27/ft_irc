@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 15:09:11 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 18:08:57 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,14 @@ std::string Client::receiveMessage(int client_fd)
 		return "";
 	buffer[bytes] = '\0';
 	return std::string(buffer);
+}
+
+void Client::remove_channel_fromchannelList(std::string channel_name)
+{
+	std::vector<std::string>::iterator it = std::find(this->channel_list.begin(), this->channel_list.end(), channel_name);
+	if (it != this->channel_list.end()) {
+		this->channel_list.erase(it);
+	}
 }
 //getters
 std::string Client::getNickname() const{

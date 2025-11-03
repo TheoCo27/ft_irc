@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 14:33:02 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 18:39:49 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ private:
 	//std::vector<Client*> clients;       // liste des clients connectés
 	std::map<int, Client*> clients_map;
 	std::vector<Channel*> channels;      // liste des channels IRC
+	std::vector<std::string> user_list;
+	std::vector<std::string> nickname_list;
 
 public:
 	// Constructeur / Destructeur
@@ -70,8 +72,10 @@ public:
 	// Getters
 	std::map<int, Client*>& get_clients_map(void);
 	std::vector<Channel*>& get_channels(void);
+	std::vector<std::string>& get_user_list(void);
+	std::vector<std::string>& get_nickname_list(void);
 };
 
 // Fonction utilitaire externe
-Client* get_client_by_fd(std::vector<Client*>& clients, int fd);
+//Client* get_client_by_fd(std::vector<Client*>& clients, int fd);
 std::string trim(const std::string& str);

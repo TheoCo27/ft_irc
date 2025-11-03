@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 14:31:23 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 18:50:25 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,9 @@ void Server::removeClient(int client_fd) {
 	// 	delete *it;
 	// 	this->clients.erase(it);
 	// }
+	Client *client = clients_map[client_fd];
+	remove_from_vec(this->user_list, client->getUsername());
+	remove_from_vec(this->nickname_list, client->getNickname());
 	this->clients_map.erase(client_fd);
 }
 
@@ -248,6 +251,8 @@ void Server::removeChannel(std::string name) {
 
 std::map<int, Client*>& Server::get_clients_map(void) { return this->clients_map; }
 std::vector<Channel*>& Server::get_channels(void) { return channels; }
+std::vector<std::string>& Server::get_user_list(void){return user_list;}
+std::vector<std::string>& Server::get_nickname_list(void){return nickname_list;}
 
 std::string trim(const std::string& str) {
 	size_t start = str.find_first_not_of(" \r\n\t");

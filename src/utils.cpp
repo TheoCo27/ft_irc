@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 15:53:33 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 18:34:01 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,13 @@ bool is_inside(std::vector<std::string> vec, std::string to_find)
 		return true;
 	else
 		return false;
+}
+
+void remove_from_vec(std::vector<std::string>& vec, std::string to_remove)
+{
+	std::vector<std::string>::iterator it = std::find(vec.begin(), vec.end(), to_remove);
+		if(it != vec.end())
+			vec.erase(it);
+		else
+			return;	
 }

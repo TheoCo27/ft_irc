@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 15:08:27 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 19:05:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include <poll.h>
 #include <algorithm>
 #include <sys/socket.h>
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE 3
 
 enum ClientStatus
 {
@@ -69,4 +69,6 @@ public:
 	// Méthodes
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
+	void remove_channel_fromchannelList(std::string channel_name);
+
 };
