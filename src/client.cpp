@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/09/25 15:01:57 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 15:09:11 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,12 @@ std::string Client::getChannelName() const{
 std::string Client::getold_buf() const{
 	return this->old_buf;
 }
+
+std::vector<std::string> &Client::get_channel_list()
+{
+	return this->channel_list;
+}
+
 
 
 //setters

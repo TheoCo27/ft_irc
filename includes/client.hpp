@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 14:53:29 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 15:08:27 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ public:
 	int getClientFd() const;
 	std::string getChannelName() const;
 	std::string getold_buf() const;
+	std::vector<std::string> &get_channel_list();
 
 	// Setters
 	void setNickname(const std::string& nickname);

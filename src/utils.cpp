@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/10/26 18:15:23 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 15:53:33 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,13 @@ std::string remove_1st_word(std::string str)
     str.erase(0, i);
     str.erase(str.length() - 1, 1);
     return (str);
+}
+
+bool is_inside(std::vector<std::string> vec, std::string to_find)
+{
+	std::vector<std::string>::iterator it = std::find(vec.begin(), vec.end(), to_find);
+	if(it != vec.end())
+		return true;
+	else
+		return false;
 }

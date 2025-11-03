@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/10/26 15:58:00 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/03 16:37:52 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,13 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
 	std::string channel_name = "#";
 	channel_name += input_name;
     int i = get_channel_index(channel_name, channels);
+	std::vector<std::string> channel_list = client->get_channel_list();
+	if (is_inside(channel_list, channel_name) == true)
+		return;
     if (i != -1)
     {
         channels[i]->addClient(client);
+		channel_list.push_back(channel_name);
         client->setChannelName(channel_name);
         client->setStatus(IN_CHANNEL);
         std::cout << client->getUsername() << " has joined " << channel_name << std::endl;
@@ -73,6 +77,7 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
         Channel *new_channel = new Channel(channel_name);
         channels.push_back(new_channel);
         new_channel->addClient(client);
+		channel_list.push_back(channel_name);
         client->setChannelName(new_channel->getName());
         client->setStatus(IN_CHANNEL);
         std::cout << "Channel " << channel_name << " created\n";
