@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 18:39:49 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/08 19:47:52 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ public:
 	//void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message);
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
+	void sendRPL(Client *client, int rpl_code, std::string msg);
 
 	// Authentification
 	bool check_password(std::string str);

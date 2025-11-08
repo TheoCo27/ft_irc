@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 18:50:25 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/08 19:47:58 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,8 +220,19 @@ void Server::inputs_manager(std::string buffer, int client_fd) {
 		int i = get_channel_index(client->getChannelName());
 		channels[i]->sendMessageToAllClients(inputs, client);
 	}
+	else
+	{
+		std::string reply = format_client_reply(client, 421, ":Unknown command");
+		sendMessage(client_fd, reply);
+	}
 }
 
+void Server::sendRPL(Client *client, int rpl_code, std::string msg)
+{
+	std::string reply = format_client_reply(client, rpl_code, msg);
+	sendMessage(client->getClientFd(), reply);
+
+}
 // Client* get_client_by_fd(std::vector<Client*>& clients, int fd) {
 // 	std::vector<Client*>::iterator it = std::find_if(clients.begin(), clients.end(), MatchClientPtr(fd));
 // 	if (it != clients.end())

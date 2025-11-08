@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 18:34:01 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/08 19:00:04 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,4 +57,38 @@ void remove_from_vec(std::vector<std::string>& vec, std::string to_remove)
 			vec.erase(it);
 		else
 			return;	
+}
+
+bool is_first_wrd_capital(std::string str)
+{
+	for(size_t i = 0; i < str.size(); i++)
+	{
+		if (!(std::isupper(static_cast<unsigned char>(str[i]))))
+			return 0;
+		if (std::isspace(static_cast<unsigned char>(str[i])))
+			break;
+	}
+	return 1;
+}
+
+std::string format_client_reply(Client *client, int rpl_code, std::string msg)
+{
+	std::string reply;
+	std::stringstream ss;
+
+	ss << ":server " << rpl_code << " " << client->getNickname() << " " << msg << "\r\n";
+	ss >> reply;
+
+}
+
+std::vector<std::string> ft_split(const std::string &s, char delim)
+{
+    std::vector<std::string> result;
+    std::stringstream ss(s);
+    std::string item;
+
+    while (std::getline(ss, item, delim))
+        result.push_back(item);
+
+    return result;
 }

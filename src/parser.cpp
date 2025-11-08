@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/03 18:48:02 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/08 19:42:50 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 bool is_cmd(std::string str)
 {
-
+	if (!(is_first_wrd_capital(str)))
+		return (false);
     for(int i = 0; i < 1; i++)
     {
         if (startsWith(str, "PASS") == true)
@@ -144,6 +145,30 @@ void nickname(std::string cmd, Client *client, Server *server)
 		client->setStatus(CONNECTED);
 		server->sendMessage(client->getClientFd(), "Welcome to server\n");
 	}
+}
+
+void privmsg(std::string cmd, Client *client, Server *server)
+{
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	std::string reply;
+
+	if (input.size() < 3)
+	{
+		reply = format_client_reply(client, 411, ":No recipient or text provided");
+		server->sendMessage(client->getClientFd(), reply);
+		return;
+	}
+	if (input[1][0] == '#')
+	{
+		is_inside(client->get_channel_list(), input[1]);
+
+	}
+	else
+	{
+
+	}
+
+
 }
 
 void make_command(std::string cmd, Client *client, Server* server)
