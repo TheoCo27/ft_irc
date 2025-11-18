@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 18:12:08 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 18:20:58 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void Server::handleClient(int client_fd) {
 	client->setOld_buf("");
 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
 	std::cout << "full msg is " << full_msg << std::endl;
-	std::string input = trim(std::string(buffer));
+	full_msg = trim(std::string(buffer));
 	inputs_manager(full_msg, client_fd);
 }
 
@@ -236,7 +236,8 @@ void Server::inputs_manager(std::string buffer, int client_fd) {
 	// }
 	else
 	{
-		std::string reply = format_client_reply(client, 421, ":Unknown command");
+		std::string reply = inputs + " :Unknown command";
+		reply = format_client_reply(client, 421, reply);
 		sendMessage(client_fd, reply);
 	}
 }
