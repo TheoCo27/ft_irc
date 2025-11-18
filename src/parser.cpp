@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/18 18:08:30 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 19:09:31 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,7 @@ bool is_cmd(std::string str)
 
 std::string trim_cmd(std::string str)
 {
-    int i = 0;
-    while(str[i] && str[i] != ' ')
-        i++;
-    while(str[i] && str[i] == ' ')
-        i++;
-    str.erase(0, i);
-    str.erase(str.length() - 1, 1);
-    return (str);
+	return (remove_1st_word(str));
 }
 
 int get_channel_index(std::string name, std::vector<Channel*> channels)
@@ -112,8 +105,11 @@ void leave(Client *client, std::vector<Channel*>& channels)
 void pass(std::string cmd, Client *client, Server* server)
 {
 	std::cout << "inside pass " << std::endl;
-    std::string input = trim_cmd(cmd);
+	std::cout << cmd << std::endl;
 
+    std::string input = remove_1st_word(cmd);
+
+	std::cout << input << std::endl;
 	if (client->getStatus() == WAITING_PASSWORD) {
 		if (server->check_password(input)) {
 			client->setStatus(WAITING_USERNAME);
@@ -157,6 +153,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 	std::string reply;
 	std::string msg = remove_1st_word(cmd);
 	msg = remove_1st_word(msg);
+	msg += "\n";
 
 	if (input.size() < 3)
 	{
@@ -168,9 +165,14 @@ void privmsg(std::string cmd, Client *client, Server *server)
 	{
 		Channel *channel = server->get_channel_by_name(input[1]);
 		if (!channel)
+		{
+			std::cout << "Channel does not exist" << std::endl;
 			return;
+		}
 		if (!(is_inside(client->get_channel_list(), input[1])))
-			return;
+		{
+			std::cout << "Client is not part of channel " << input[1] << std::endl;
+		}
 		channel->sendMessageToAllClients(msg, client);
 	}
 	else

@@ -54,4 +54,7 @@ fclean: clean
 # Recompilation complète
 re: fclean all
 
-.PHONY: all clean fclean re
+run:
+	bash ./run_irc.sh
+
+.PHONY: all clean fclean re run

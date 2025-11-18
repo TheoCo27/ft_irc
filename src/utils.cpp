@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 17:49:13 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 18:51:24 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ void decapitalize(std::string &str)
 
 std::string remove_1st_word(std::string str)
 {
-    int i = 0;
-    while(str[i] && !(std::isspace(static_cast<unsigned char>(str[i]))))
-        i++;
-    while(str[i] && std::isspace(static_cast<unsigned char>(str[i])))
-        i++;
-    str.erase(0, i);
-    str.erase(str.length() - 1, 1);
-    return (str);
+	size_t i = 0;
+	while(str[i] && !(std::isspace(static_cast<unsigned char>(str[i]))))
+		i++;
+	while(str[i] && std::isspace(static_cast<unsigned char>(str[i])))
+		i++;
+	if (i < str.size())
+		return str.substr(i);
+	return "";
 }
 
 bool is_inside(std::vector<std::string> vec, std::string to_find)
