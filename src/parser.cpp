@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/18 17:44:09 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 18:08:30 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ void pass(std::string cmd, Client *client, Server* server)
 		} else {
 			server->sendMessage(client->getClientFd(), "Wrong password. Connection closed.\n");
 			server->closeClient(client->getClientFd());
-			server->removeClient(client->getClientFd());
 		}
 	}
 }

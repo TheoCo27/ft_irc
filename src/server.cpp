@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 17:37:15 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 18:12:08 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,47 +160,6 @@ void Server::handleClient(int client_fd) {
 	inputs_manager(full_msg, client_fd);
 }
 
-// void Server::handleClient(int client_fd)
-// {
-//     Client* client = clients_map[client_fd];
-//     char buffer[BUFFER_SIZE];
-
-//     ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
-//     if (bytes <= 0) {
-//         if (bytes == 0 || (errno != EAGAIN && errno != EWOULDBLOCK)) {
-//             closeClient(client_fd);
-//         }
-//         return;
-//     }
-
-//     buffer[bytes] = '\0';
-//     client->append_old_buff(buffer, bytes);
-
-//     std::string &buf = client->getold_buf();
-//     size_t pos = 0;
-
-//     while (true) {
-//         size_t nl_pos = buf.find("\n", pos);
-//         if (nl_pos == std::string::npos)
-//             break;
-
-//         std::string line = buf.substr(pos, nl_pos - pos);
-//         if (!line.empty() && line[line.size() - 1] == '\r')
-//             line.erase(line.size() - 1);
-
-//         pos = nl_pos + 1;
-//         line = trim(line);
-
-//         if (!line.empty())
-//             inputs_manager(line, client_fd);
-//     }
-
-//     if (pos > 0)
-//         buf.erase(0, pos);
-// }
-
-
-
 
 void Server::closeClient(int client_fd) {
 	epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
@@ -209,11 +168,14 @@ void Server::closeClient(int client_fd) {
 }
 
 void Server::removeClient(int client_fd) {
-	// std::vector<Client*>::iterator it = std::find_if(this->clients.begin(), this->clients.end(), MatchClientPtr(client_fd));
-	// if (it != this->clients.end()) {
-	// 	delete *it;
-	// 	this->clients.erase(it);
-	// }
+	// Client* client = NULL;
+
+	// if (clients_map.count(client_fd))
+	// 	client = clients_map[client_fd];
+
+	// if (!client)
+	// 	return; // évite le crash
+
 	Client *client = clients_map[client_fd];
 	remove_from_vec(this->user_list, client->getUsername());
 	remove_from_vec(this->nickname_list, client->getNickname());
@@ -262,21 +224,21 @@ void Server::inputs_manager(std::string buffer, int client_fd) {
 		make_command(inputs, client, this);
 		return;
 	} 
-	else if (client->getStatus() == IN_CHANNEL) {
-		std::cout << "Looking for channel : " << client->getChannelName() << std::endl;
-		for(std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
-		{
-			Channel *chan = *it;
-			std::cout << chan->getName() << std::endl;
-		}
-		int i = get_channel_index(client->getChannelName());
-		channels[i]->sendMessageToAllClients(inputs, client);
-	}
-	// else
-	// {
-	// 	std::string reply = format_client_reply(client, 421, ":Unknown command");
-	// 	sendMessage(client_fd, reply);
+	// else if (client->getStatus() == IN_CHANNEL) {
+	// 	std::cout << "Looking for channel : " << client->getChannelName() << std::endl;
+	// 	for(std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
+	// 	{
+	// 		Channel *chan = *it;
+	// 		std::cout << chan->getName() << std::endl;
+	// 	}
+	// 	int i = get_channel_index(client->getChannelName());
+	// 	channels[i]->sendMessageToAllClients(inputs, client);
 	// }
+	else
+	{
+		std::string reply = format_client_reply(client, 421, ":Unknown command");
+		sendMessage(client_fd, reply);
+	}
 }
 
 void Server::sendRPL(Client *client, int rpl_code, std::string msg)
