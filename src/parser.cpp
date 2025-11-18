@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/08 19:42:50 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 17:44:09 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,13 @@
 
 bool is_cmd(std::string str)
 {
-	if (!(is_first_wrd_capital(str)))
+	std::cout << "inside is command\n";
+	if (is_first_wrd_capital(str) == false)
 		return (false);
     for(int i = 0; i < 1; i++)
     {
         if (startsWith(str, "PASS") == true)
-            return(true);
+            return(std::cout << "PASS command iD\n", true);
         if (startsWith(str, "NICK") == true)
             return(true);
         if (startsWith(str, "USER") == true)
@@ -28,7 +29,10 @@ bool is_cmd(std::string str)
             return(true);
         if (startsWith(str, "LEAVE") == true)
             return(true);
+        if (startsWith(str, "PRIVMSG") == true)
+            return(true);
     }
+	std::cout << "command not found\n";
     return(false);
 }
 
@@ -107,6 +111,7 @@ void leave(Client *client, std::vector<Channel*>& channels)
 
 void pass(std::string cmd, Client *client, Server* server)
 {
+	std::cout << "inside pass " << std::endl;
     std::string input = trim_cmd(cmd);
 
 	if (client->getStatus() == WAITING_PASSWORD) {
@@ -151,6 +156,8 @@ void privmsg(std::string cmd, Client *client, Server *server)
 {
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	std::string reply;
+	std::string msg = remove_1st_word(cmd);
+	msg = remove_1st_word(msg);
 
 	if (input.size() < 3)
 	{
@@ -160,15 +167,20 @@ void privmsg(std::string cmd, Client *client, Server *server)
 	}
 	if (input[1][0] == '#')
 	{
-		is_inside(client->get_channel_list(), input[1]);
-
+		Channel *channel = server->get_channel_by_name(input[1]);
+		if (!channel)
+			return;
+		if (!(is_inside(client->get_channel_list(), input[1])))
+			return;
+		channel->sendMessageToAllClients(msg, client);
 	}
 	else
 	{
-
+		Client *dest = server->get_client_by_nick(input[1]);
+		if (!dest)
+			return;
+		client->sendMessage(dest->getClientFd(), msg);
 	}
-
-
 }
 
 void make_command(std::string cmd, Client *client, Server* server)
@@ -184,8 +196,10 @@ void make_command(std::string cmd, Client *client, Server* server)
 		nickname(cmd, client, server);
 	if (startsWith(cmd, "USER"))
 		username(cmd, client, server);
-	// if (startsWith(cmd, "PRIVMSG"))
-	// 	priv_msg(cmd, client, server);
+	if (startsWith(cmd, "PRIVMSG"))
+		privmsg(cmd, client, server);
+	else
+		std::cout << "couldnt execeute command\n";
 }
 
 	// if (client->getStatus() == WAITING_PASSWORD) {

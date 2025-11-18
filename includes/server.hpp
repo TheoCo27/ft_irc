@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/08 19:47:52 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/08 20:30:49 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ public:
 	std::vector<Channel*>& get_channels(void);
 	std::vector<std::string>& get_user_list(void);
 	std::vector<std::string>& get_nickname_list(void);
+	Channel *get_channel_by_name(std::string channel_name);
+	Client *get_client_by_nick(std::string nickname);
 };
 
 // Fonction utilitaire externe

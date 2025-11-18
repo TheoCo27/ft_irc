@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/03 18:08:57 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/08 22:04:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,13 @@ void Client::remove_channel_fromchannelList(std::string channel_name)
 		this->channel_list.erase(it);
 	}
 }
+
+void Client::append_old_buff(const char *data, size_t len)
+{
+	old_buf.append(data, len);
+}
+
+
 //getters
 std::string Client::getNickname() const{
 	return this->_nickname;
@@ -63,7 +70,8 @@ std::string Client::getChannelName() const{
 	return this->channel_name;
 }
 
-std::string Client::getold_buf() const{
+std::string& Client::getold_buf()
+{
 	return this->old_buf;
 }
 

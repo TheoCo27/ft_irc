@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/08 19:47:58 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/18 17:37:15 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 // 		return c->getClientFd() == client_fd;
 // 	}
 // };
+
+// Initialisiation du serveur
 
 Server::Server(int port, const std::string password) : password(password) {
 	this->port = port;
@@ -127,10 +129,12 @@ void Server::acceptClient() {
 }
 
 void Server::handleClient(int client_fd) {
+	std::cout << "inisde handleclient " << std::endl;
 	char buffer[BUFFER_SIZE];
 	//Client *client = get_client_by_fd(this->clients, client_fd);
 	Client *client = this->clients_map[client_fd];
 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+	std::cout << "client said "<< buffer << std::endl;
 	if (bytes <= 0) {
 		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
 		closeClient(client_fd);
@@ -151,9 +155,52 @@ void Server::handleClient(int client_fd) {
 	full_msg += buffer;
 	client->setOld_buf("");
 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
+	std::cout << "full msg is " << full_msg << std::endl;
 	std::string input = trim(std::string(buffer));
 	inputs_manager(full_msg, client_fd);
 }
+
+// void Server::handleClient(int client_fd)
+// {
+//     Client* client = clients_map[client_fd];
+//     char buffer[BUFFER_SIZE];
+
+//     ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+//     if (bytes <= 0) {
+//         if (bytes == 0 || (errno != EAGAIN && errno != EWOULDBLOCK)) {
+//             closeClient(client_fd);
+//         }
+//         return;
+//     }
+
+//     buffer[bytes] = '\0';
+//     client->append_old_buff(buffer, bytes);
+
+//     std::string &buf = client->getold_buf();
+//     size_t pos = 0;
+
+//     while (true) {
+//         size_t nl_pos = buf.find("\n", pos);
+//         if (nl_pos == std::string::npos)
+//             break;
+
+//         std::string line = buf.substr(pos, nl_pos - pos);
+//         if (!line.empty() && line[line.size() - 1] == '\r')
+//             line.erase(line.size() - 1);
+
+//         pos = nl_pos + 1;
+//         line = trim(line);
+
+//         if (!line.empty())
+//             inputs_manager(line, client_fd);
+//     }
+
+//     if (pos > 0)
+//         buf.erase(0, pos);
+// }
+
+
+
 
 void Server::closeClient(int client_fd) {
 	epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
@@ -205,12 +252,17 @@ bool Server::check_password(std::string str) {
 // }
 
 void Server::inputs_manager(std::string buffer, int client_fd) {
+	std::cout << "inside input manager" << std::endl;
 	std::string inputs(buffer);
+	if (inputs.empty())
+		return;
 	//Client* client = get_client_by_fd(this->clients, client_fd);
 	Client* client = this->clients_map[client_fd];
 	if (is_cmd(inputs)) {
 		make_command(inputs, client, this);
-	} else if (client->getStatus() == IN_CHANNEL) {
+		return;
+	} 
+	else if (client->getStatus() == IN_CHANNEL) {
 		std::cout << "Looking for channel : " << client->getChannelName() << std::endl;
 		for(std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
 		{
@@ -220,11 +272,11 @@ void Server::inputs_manager(std::string buffer, int client_fd) {
 		int i = get_channel_index(client->getChannelName());
 		channels[i]->sendMessageToAllClients(inputs, client);
 	}
-	else
-	{
-		std::string reply = format_client_reply(client, 421, ":Unknown command");
-		sendMessage(client_fd, reply);
-	}
+	// else
+	// {
+	// 	std::string reply = format_client_reply(client, 421, ":Unknown command");
+	// 	sendMessage(client_fd, reply);
+	// }
 }
 
 void Server::sendRPL(Client *client, int rpl_code, std::string msg)
@@ -265,6 +317,28 @@ std::vector<Channel*>& Server::get_channels(void) { return channels; }
 std::vector<std::string>& Server::get_user_list(void){return user_list;}
 std::vector<std::string>& Server::get_nickname_list(void){return nickname_list;}
 
+Channel *Server::get_channel_by_name(std::string channel_name)
+{
+	for(std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
+	{
+		Channel *check = *it;
+		if (check->getName() == channel_name)
+			return (check);
+	}
+	return (NULL);
+}
+
+Client *Server::get_client_by_nick(std::string nickname)
+{
+	for(std::map<int, Client *>::iterator it = this->clients_map.begin(); it != this->clients_map.end(); ++it)
+	{
+		Client *check = it->second;
+		if (check->getNickname() == nickname)
+			return (check);
+	}
+	return (NULL);
+}
+
 std::string trim(const std::string& str) {
 	size_t start = str.find_first_not_of(" \r\n\t");
 	size_t end = str.find_last_not_of(" \r\n\t");
@@ -272,6 +346,8 @@ std::string trim(const std::string& str) {
 		return "";
 	return str.substr(start, end - start + 1);
 }
+
+
 
 // void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message) {
 //     std::ostringstream response;
