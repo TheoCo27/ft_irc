@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 18:16:20 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/20 14:52:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 Client::Client(int client_fd)
 {
 	this->_client_fd = client_fd;
-	this->_nickname = "no_nick";
-	this->_username = "no_user";
+	this->_nickname = "*";
+	this->_username = "*";
 	this->status = WAITING_PASSWORD;
 	this->channel_name = "";
 	this->old_buf = "";

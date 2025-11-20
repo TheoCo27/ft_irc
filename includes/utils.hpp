@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/08 19:00:01 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/20 17:33:28 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,3 +27,4 @@ void remove_from_vec(std::vector<std::string>& vec, std::string to_remove);
 bool is_first_wrd_capital(std::string str);
 std::string format_client_reply(Client *client, int rpl_code, std::string msg);
 std::vector<std::string> ft_split(const std::string &s, char delim);
+bool check_valid_nickname(std::string nick);

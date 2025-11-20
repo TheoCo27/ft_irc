@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 18:51:24 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/20 17:34:44 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void remove_from_vec(std::vector<std::string>& vec, std::string to_remove)
 
 bool is_first_wrd_capital(std::string str)
 {
-	std::cout << "im blocked\n";
 	for(size_t i = 0; i < str.size(); i++)
 	{
 		if (!(std::isupper(static_cast<unsigned char>(str[i]))) && !(std::isspace(static_cast<unsigned char>(str[i]))))
@@ -69,7 +68,6 @@ bool is_first_wrd_capital(std::string str)
 		if (std::isspace(static_cast<unsigned char>(str[i])))
 			break;
 	}
-	std::cout << "im good\n";
 	return 1;
 }
 
@@ -93,4 +91,28 @@ std::vector<std::string> ft_split(const std::string &s, char delim)
         result.push_back(item);
 
     return result;
+}
+
+static bool is_valid_char_for_nickname(char c)
+{
+	char set[] = "-[]{}|`^\\";
+	
+	if (std::isalpha(static_cast<int>(c)) || std::isdigit(static_cast<int>(c)))
+		return true;
+	for(int i = 0; set[i]; i++)
+		if (c == set[i])
+			return true;
+	return false;
+}
+
+bool check_valid_nickname(std::string nick)
+{
+	if (nick.empty())
+		return false;
+	if (std::isalpha(static_cast<int>(nick[0])) == false)
+		return false;
+	for(size_t i = 0; nick[i]; i++)
+		if(is_valid_char_for_nickname(nick[i]) == false)
+			return false;
+	return true;
 }

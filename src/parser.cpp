@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/18 19:09:31 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/20 18:01:28 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 
 bool is_cmd(std::string str)
 {
-	std::cout << "inside is command\n";
 	if (is_first_wrd_capital(str) == false)
 		return (false);
     for(int i = 0; i < 1; i++)
     {
         if (startsWith(str, "PASS") == true)
-            return(std::cout << "PASS command iD\n", true);
+            return(true);
         if (startsWith(str, "NICK") == true)
             return(true);
         if (startsWith(str, "USER") == true)
@@ -32,7 +31,6 @@ bool is_cmd(std::string str)
         if (startsWith(str, "PRIVMSG") == true)
             return(true);
     }
-	std::cout << "command not found\n";
     return(false);
 }
 
@@ -54,7 +52,6 @@ int get_channel_index(std::string name, std::vector<Channel*> channels)
 
 void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
 {
-    std::cout << "inside join\n";
     std::string input_name = trim_cmd(cmd);
 	std::string channel_name = "#";
 	channel_name += input_name;
@@ -104,18 +101,25 @@ void leave(Client *client, std::vector<Channel*>& channels)
 
 void pass(std::string cmd, Client *client, Server* server)
 {
-	std::cout << "inside pass " << std::endl;
-	std::cout << cmd << std::endl;
-
+	std::vector<std::string> tab = ft_split(cmd, ' ');
+	if (tab.size() < 2)
+	{
+		server->sendRPL(client, 461, "PASS :Not enough parameters");
+		return;
+	}
     std::string input = remove_1st_word(cmd);
 
-	std::cout << input << std::endl;
+	if (client->getStatus() == CONNECTED)
+	{
+		server->sendRPL(client, 462, "Error, already registered");
+		return;
+	}
 	if (client->getStatus() == WAITING_PASSWORD) {
 		if (server->check_password(input)) {
-			client->setStatus(WAITING_USERNAME);
-			server->sendMessage(client->getClientFd(), "Password OK. Please type username:\n");
+			client->setStatus(WAITING_NICKNAME);
+			server->sendMessage(client->getClientFd(), "Password OK. Please type nickname:\n");
 		} else {
-			server->sendMessage(client->getClientFd(), "Wrong password. Connection closed.\n");
+			server->sendRPL(client, 464, ":Password incorrect");
 			server->closeClient(client->getClientFd());
 		}
 	}
@@ -128,7 +132,7 @@ void username(std::string cmd, Client *client, Server *server)
 	if(client->getStatus() == WAITING_USERNAME)
 	{
 		client->setUsername(username);
-		client->setStatus(WAITING_NICKNAME);
+		client->setStatus(CONNECTED);
 		user_list.push_back(username);
 		server->sendMessage(client->getClientFd(), "Please type nickname\n");
 	}
@@ -136,13 +140,31 @@ void username(std::string cmd, Client *client, Server *server)
 
 void nickname(std::string cmd, Client *client, Server *server)
 {
+	std::vector<std::string> tab = ft_split(cmd, ' ');
+	if (tab.size() < 2)
+	{
+		server->sendRPL(client, 431, ":No nickname given");
+		return;
+	}
 	std::string nick = trim_cmd(cmd);
+	if (check_valid_nickname(nick) == false)
+	{
+		std::string rpl = nick + " :Erroneous nickname";
+		server->sendRPL(client, 432, rpl);
+		return;
+	}
 	std::vector<std::string> nickname_list = server->get_nickname_list();
+	if (is_inside(nickname_list, nick))
+	{
+		std::string rpl = nick + " :Nickname is already in use";
+		server->sendRPL(client, 433, rpl);
+		return;
+	}
 	if(client->getStatus() == WAITING_NICKNAME)
 	{
 		client->setNickname(nick);
 		nickname_list.push_back(nick);
-		client->setStatus(CONNECTED);
+		client->setStatus(WAITING_USERNAME);
 		server->sendMessage(client->getClientFd(), "Welcome to server\n");
 	}
 }
@@ -186,7 +208,6 @@ void privmsg(std::string cmd, Client *client, Server *server)
 
 void make_command(std::string cmd, Client *client, Server* server)
 {
-	std::cout << "inside Make_command\n";
 	if (startsWith(cmd, "JOIN"))
 		join(cmd, client, server->get_channels());
 	if (startsWith(cmd, "LEAVE"))
@@ -199,8 +220,6 @@ void make_command(std::string cmd, Client *client, Server* server)
 		username(cmd, client, server);
 	if (startsWith(cmd, "PRIVMSG"))
 		privmsg(cmd, client, server);
-	else
-		std::cout << "couldnt execeute command\n";
 }
 
 	// if (client->getStatus() == WAITING_PASSWORD) {
