@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 18:20:58 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/20 14:18:42 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,12 +129,10 @@ void Server::acceptClient() {
 }
 
 void Server::handleClient(int client_fd) {
-	std::cout << "inisde handleclient " << std::endl;
 	char buffer[BUFFER_SIZE];
 	//Client *client = get_client_by_fd(this->clients, client_fd);
 	Client *client = this->clients_map[client_fd];
 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
-	std::cout << "client said "<< buffer << std::endl;
 	if (bytes <= 0) {
 		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
 		closeClient(client_fd);
@@ -155,7 +153,6 @@ void Server::handleClient(int client_fd) {
 	full_msg += buffer;
 	client->setOld_buf("");
 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
-	std::cout << "full msg is " << full_msg << std::endl;
 	full_msg = trim(std::string(buffer));
 	inputs_manager(full_msg, client_fd);
 }
@@ -214,7 +211,6 @@ bool Server::check_password(std::string str) {
 // }
 
 void Server::inputs_manager(std::string buffer, int client_fd) {
-	std::cout << "inside input manager" << std::endl;
 	std::string inputs(buffer);
 	if (inputs.empty())
 		return;
