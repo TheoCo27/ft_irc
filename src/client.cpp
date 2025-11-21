@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 01:34:40 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/21 13:45:57 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Client::Client(int client_fd)
 	this->_nickname = "*";
 	this->_username = "*";
 	this->_realname = "realname.com";
-	this->status = WAITING_PASSWORD;
+	this->status = EMPTY;
 	this->channel_name = "";
 	this->old_buf = "";
 }

@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/21 01:58:57 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/21 14:19:48 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,9 @@ void pass(std::string cmd, Client *client, Server* server)
 		server->sendRPL(client, 462, "Error, already registered");
 		return;
 	}
-	if (client->getStatus() == WAITING_PASSWORD) {
+	if (client->getStatus() == EMPTY) {
 		if (server->check_password(input)) {
-			client->setStatus(WAITING_NICKNAME);
+			client->setStatus(PASSWORD_OK);
 			server->sendMessage(client->getClientFd(), "Password OK. Please type nickname:\n");
 		} else {
 			server->sendRPL(client, 464, ":Password incorrect");
@@ -124,10 +124,38 @@ void pass(std::string cmd, Client *client, Server* server)
 		}
 	}
 }
-
+//USER <username> <mode> <unused> :<realname>
+//0 cmd
+// 1 nick
+// 2 mode
+// 3 inutile
+// 4 inutile
+// 6 realname
+std::string get_realname(std::string cmd)
+{	
+	std::string realname;
+	for(int i = 0; i < 4; i++)
+		realname = remove_1st_word(cmd);
+	return realname;
+}
 void username(std::string cmd, Client *client, Server *server)
 {
-	std::string username = trim_cmd(cmd);
+	std::vector<std::string> parsed_input = ft_split(cmd, ' ');
+
+	if (parsed_input.size() < 5)
+	{
+		server->sendRPL(client, 461, "USER :Not enough parameters");
+		return;
+	}
+	if (!(client->getStatus() & NICK_OK))
+	{
+		server->sendRPL(client, 451, "You have not registered");
+		return;
+	}
+
+	std::string username = parsed_input[1];
+	std::string mode = parsed_input[2];
+	std::string realname = get_realname(cmd);
 	std::vector<std::string> user_list = server->get_user_list();
 	if(client->getStatus() == WAITING_USERNAME)
 	{
@@ -160,14 +188,14 @@ void nickname(std::string cmd, Client *client, Server *server)
 		server->sendRPL(client, 433, rpl);
 		return;
 	}
-	if(client->getStatus() == WAITING_NICKNAME)
+	if(client->getStatus() & PASSWORD_OK)
 	{
 		client->setNickname(nick);
 		nickname_list.push_back(nick);
-		client->setStatus(WAITING_USERNAME);
+		client->setStatus(NICK_OK | PASSWORD_OK);
 		server->sendMessage(client->getClientFd(), "Please type username\n");
 	}
-	else if(client->getStatus() == CONNECTED)
+	else if(client->getStatus() == CONNECTED || client->getStatus() == IN_CHANNEL)
 	{
 		std::vector<Channel *> channel_list = client->get_channel_list();
 		std::string msg = " NICK:" + nick + "\r\n";

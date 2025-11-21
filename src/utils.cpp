@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/20 17:34:44 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/21 14:24:34 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void decapitalize(std::string &str)
 std::string remove_1st_word(std::string str)
 {
 	size_t i = 0;
+	while(str[i] && std::isspace(static_cast<unsigned char>(str[i])))
+		i++;
 	while(str[i] && !(std::isspace(static_cast<unsigned char>(str[i]))))
 		i++;
 	while(str[i] && std::isspace(static_cast<unsigned char>(str[i])))
@@ -115,4 +117,10 @@ bool check_valid_nickname(std::string nick)
 		if(is_valid_char_for_nickname(nick[i]) == false)
 			return false;
 	return true;
+}
+
+int remove_flag(int status, int flag_to_remove)
+{
+	status &= ~flag_to_remove;
+	return status;
 }

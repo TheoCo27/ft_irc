@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 01:34:57 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/21 14:15:06 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,13 @@
 
 enum ClientStatus
 {
-	WAITING_PASSWORD,
-	WAITING_USERNAME,
-	WAITING_NICKNAME,
-	CONNECTED,
-	IN_CHANNEL,
-	DISCONNECTED
+	EMPTY = 0,
+	PASSWORD_OK = 1 < 1,
+	NICK_OK = 1 < 2,
+	USER_OK = 1 < 3,
+	CONNECTED = 1 < 4,
+	IN_CHANNEL = 1 < 5,
+	DISCONNECTED = 1 < 6
 };
 
 class Client
