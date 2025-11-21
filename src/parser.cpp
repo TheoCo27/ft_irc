@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/21 01:48:13 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/21 01:58:57 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
         channels[i]->addClient(client);
 		channel_list.push_back(channel_name);
         client->setChannelName(channel_name);
-        client->setStatus(IN_CHANNEL);
+        //client->setStatus(IN_CHANNEL);
         std::cout << client->getUsername() << " has joined " << channel_name << std::endl;
     }
     else
@@ -74,7 +74,7 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
         new_channel->addClient(client);
 		channel_list.push_back(channel_name);
         client->setChannelName(new_channel->getName());
-        client->setStatus(IN_CHANNEL);
+        //client->setStatus(IN_CHANNEL);
         std::cout << "Channel " << channel_name << " created\n";
     }
 }
