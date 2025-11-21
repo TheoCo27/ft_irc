@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/20 14:18:42 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/21 18:29:46 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,10 +101,9 @@ void Server::start() {
 	}
 }
 
-static void make_socket_non_blocking(int fd) {
-	int flags = fcntl(fd, F_GETFL, 0);
-	if (flags == -1) flags = 0;
-	fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+static void make_socket_non_blocking(int fd) 
+{
+	fcntl(fd, F_SETFL, O_NONBLOCK);
 }
 
 void Server::acceptClient() {
@@ -243,6 +242,12 @@ void Server::sendRPL(Client *client, int rpl_code, std::string msg)
 	std::string reply = format_client_reply(client, rpl_code, msg);
 	sendMessage(client->getClientFd(), reply);
 
+}
+
+void Server::sendNotice(Client *client, std::string msg)
+{
+	std::string reply = format_client_notice(client, msg);
+	sendMessage(client->getClientFd(), reply);
 }
 // Client* get_client_by_fd(std::vector<Client*>& clients, int fd) {
 // 	std::vector<Client*>::iterator it = std::find_if(clients.begin(), clients.end(), MatchClientPtr(fd));

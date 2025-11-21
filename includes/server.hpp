@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/08 20:30:49 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/21 18:30:43 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,8 @@ public:
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
 	void sendRPL(Client *client, int rpl_code, std::string msg);
+	void sendNotice(Client *client, std::string msg)
+
 
 	// Authentification
 	bool check_password(std::string str);

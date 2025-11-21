@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/21 14:19:48 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/21 19:23:06 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
 
 void leave(Client *client, std::vector<Channel*>& channels)
 {
-    if (client->getStatus() == CONNECTED)
+    if (client->getStatus() & CONNECTED)
         return;
     std::string channel_name = client->getChannelName();
     int i = get_channel_index(channel_name, channels);
@@ -91,7 +91,7 @@ void leave(Client *client, std::vector<Channel*>& channels)
     {
         channels[i]->removeClient(client);
         client->setChannelName("");;
-        client->setStatus(CONNECTED);
+        client->setStatus(client->getStatus() | CONNECTED);
 		client->remove_channel_fromchannelList(channel_name);
         if (channels[i]->getNbClient() <= 0)
             channels.erase(channels.begin() + i);
@@ -109,7 +109,7 @@ void pass(std::string cmd, Client *client, Server* server)
 	}
     std::string input = remove_1st_word(cmd);
 
-	if (client->getStatus() == CONNECTED)
+	if (client->getStatus() & CONNECTED)
 	{
 		server->sendRPL(client, 462, "Error, already registered");
 		return;
@@ -138,6 +138,18 @@ std::string get_realname(std::string cmd)
 		realname = remove_1st_word(cmd);
 	return realname;
 }
+
+void connect_client(Client *client, Server *server)
+{
+	if(client->getStatus() & PASSWORD_OK & NICK_OK & USER_OK)
+	{
+		client->setStatus(client->getStatus() | CONNECTED);
+		server->SendRPL(ClientFD, 001, "Welcome to the IRC network, " + client->getNickname() + "!" + client->getUsername() + "@" + client->getRealname());
+		server->SendRPL(ClientFD, 002, "Your host is server.42irc" + ", running version 1.0");
+		server->SendRPL(ClientFD, 003, "This server was created on 2025/11/07 00:04:20");
+		server->SendRPL(ClientFD, 004,  "server.42irc 1.0 o o");
+	}
+}
 void username(std::string cmd, Client *client, Server *server)
 {
 	std::vector<std::string> parsed_input = ft_split(cmd, ' ');
@@ -147,27 +159,39 @@ void username(std::string cmd, Client *client, Server *server)
 		server->sendRPL(client, 461, "USER :Not enough parameters");
 		return;
 	}
-	if (!(client->getStatus() & NICK_OK))
+	if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
 	{
-		server->sendRPL(client, 451, "You have not registered");
+		if (client->getStatus() & CONNECTED)
+			server->sendRPL(client, 462, "You may not reregister");
+		else
+			server->sendRPL(client, 462, "Use PASS command first");
 		return;
 	}
-
 	std::string username = parsed_input[1];
+	if (check_valid_username(username) == false)
+	{
+		username = get_valid_username(username);
+		server->sendNotice(client, "Invalid username has been normalized")
+
+	}
 	std::string mode = parsed_input[2];
 	std::string realname = get_realname(cmd);
-	std::vector<std::string> user_list = server->get_user_list();
-	if(client->getStatus() == WAITING_USERNAME)
-	{
-		client->setUsername(username);
-		client->setStatus(CONNECTED);
-		user_list.push_back(username);
-		server->sendMessage(client->getClientFd(), "Welcome to server\n");
-	}
+	if (check_valid_realname(realname) == false)
+		server->sendNotice(client, "Invalid realname has been normalized")
+	realname = get_valid_realname(realname);
+	client->setUsername(username);
+	client->setRealname(realname);
+	client->setStatus(client->getStatus() | USER_OK);
+	connect_client(client, server);
 }
 
 void nickname(std::string cmd, Client *client, Server *server)
 {
+	if (!(client->getStatus() & PASSWORD_OK))
+	{
+		server->sendRPL(client, 462, "Use PASS command first");
+		return;
+	}
 	std::vector<std::string> tab = ft_split(cmd, ' ');
 	if (tab.size() < 2)
 	{
@@ -188,14 +212,14 @@ void nickname(std::string cmd, Client *client, Server *server)
 		server->sendRPL(client, 433, rpl);
 		return;
 	}
-	if(client->getStatus() & PASSWORD_OK)
+	if(client->getStatus() & PASSWORD_OK && (!(client->getStatus() & CONNECTED)))
 	{
 		client->setNickname(nick);
 		nickname_list.push_back(nick);
-		client->setStatus(NICK_OK | PASSWORD_OK);
-		server->sendMessage(client->getClientFd(), "Please type username\n");
+		client->setStatus(client->getStatus() | NICK_OK);
+		connect_client(client, server);
 	}
-	else if(client->getStatus() == CONNECTED || client->getStatus() == IN_CHANNEL)
+	else if(client->getStatus() & CONNECTED || client->getStatus() & IN_CHANNEL)
 	{
 		std::vector<Channel *> channel_list = client->get_channel_list();
 		std::string msg = " NICK:" + nick + "\r\n";

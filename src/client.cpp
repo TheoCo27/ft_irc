@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 13:45:57 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/21 18:52:41 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Client::Client(int client_fd)
 	this->_client_fd = client_fd;
 	this->_nickname = "*";
 	this->_username = "*";
-	this->_realname = "realname.com";
+	this->_realname = "r";
 	this->status = EMPTY;
 	this->channel_name = "";
 	this->old_buf = "";
@@ -61,6 +61,11 @@ std::string Client::getNickname() const{
 std::string Client::getUsername() const{
 	return this->_username;
 }
+
+std::string Client::getRealname() const{
+	return(this->_realname);
+}
+
 int Client::getStatus() const{
 	return this->status;
 }
@@ -90,6 +95,11 @@ void Client::setNickname(const std::string& nickname){
 void Client::setUsername(const std::string& username){
 	this->_username = username;
 }
+
+void Client::setRealname(const std::string& realname){
+	this->_realname = realname;
+}
+
 void Client::setStatus(int status){
 	this->status = status;
 }
