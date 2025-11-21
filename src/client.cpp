@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/20 14:52:47 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/21 01:34:40 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Client::Client(int client_fd)
 	this->_client_fd = client_fd;
 	this->_nickname = "*";
 	this->_username = "*";
+	this->_realname = "realname.com";
 	this->status = WAITING_PASSWORD;
 	this->channel_name = "";
 	this->old_buf = "";
@@ -46,10 +47,10 @@ void Client::remove_channel_fromchannelList(std::string channel_name)
 		this->channel_list.erase(it);
 	}
 }
-
-void Client::append_old_buff(const char *data, size_t len)
+std::string Client::format_RPL(std::string msg)
 {
-	old_buf.append(data, len);
+	std::string reply = ":" + this->_nickname + "!" + this->_username + "@" + this->_realname + msg;
+	return reply;
 }
 
 

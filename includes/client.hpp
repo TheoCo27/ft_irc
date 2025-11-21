@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/18 17:21:12 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/21 01:34:57 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Client
 private:
 	std::string _nickname;
 	std::string _username;
+	std::string _realname;
 	int status;	
 	int _client_fd;
 	std::string channel_name;
@@ -71,6 +72,5 @@ public:
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
 	void remove_channel_fromchannelList(std::string channel_name);
-	void append_old_buff(const char *data, size_t len);
-
+	std::string format_RPL(std::string msg);
 };

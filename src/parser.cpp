@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/20 18:01:28 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/21 01:48:13 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ void username(std::string cmd, Client *client, Server *server)
 		client->setUsername(username);
 		client->setStatus(CONNECTED);
 		user_list.push_back(username);
-		server->sendMessage(client->getClientFd(), "Please type nickname\n");
+		server->sendMessage(client->getClientFd(), "Welcome to server\n");
 	}
 }
 
@@ -165,7 +165,22 @@ void nickname(std::string cmd, Client *client, Server *server)
 		client->setNickname(nick);
 		nickname_list.push_back(nick);
 		client->setStatus(WAITING_USERNAME);
-		server->sendMessage(client->getClientFd(), "Welcome to server\n");
+		server->sendMessage(client->getClientFd(), "Please type username\n");
+	}
+	else if(client->getStatus() == CONNECTED)
+	{
+		std::vector<Channel *> channel_list = client->get_channel_list();
+		std::string msg = " NICK:" + nick + "\r\n";
+		msg = client->format_RPL(nick);
+		for(size_t i = 0; i < channel_list.size(); i++)
+		{
+			Channel* channel = channel_list[i];
+			channel->sendMessageToAllClients(msg, client);
+		}
+		remove_from_vec(nickname_list, client->getNickname());
+		client->setNickname(nick);
+		nickname_list.push_back(nick);
+		server->sendMessage(client->getClientFd(), msg);
 	}
 }
 
