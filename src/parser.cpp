@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/21 19:23:06 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/22 17:27:55 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,28 @@ int get_channel_index(std::string name, std::vector<Channel*> channels)
     return (-1); // pas trouvé
 }
 
-void join(std::string cmd, Client *client, std::vector<Channel*>& channels)
+void join(std::string cmd, Client *client, Server *server)
 {
+	std::vector<std::string> input = ft_split(cmd);
+	if (input.size() < 2)
+	{
+		server->sendRPL(client, 461, "JOIN :Not enough parameters");
+		return;
+	}
+	if (!input[1].empty() && input[1] == "0")
+	{
+		//part from all channels
+		return;
+	}
+	if (check_valid_channel_name(input[1]) == false)
+	{
+		server->sendRPL(client, 476, input[1] + " :Bad Channel Mask");
+		return;
+	}
+	if(is_inside(client->get_channel_list(), input[1]))
+		return; // renvoie topic + names
+	
+	std::vector<Channel*>& channels = server->get_channels();
     std::string input_name = trim_cmd(cmd);
 	std::string channel_name = "#";
 	channel_name += input_name;
@@ -124,13 +144,6 @@ void pass(std::string cmd, Client *client, Server* server)
 		}
 	}
 }
-//USER <username> <mode> <unused> :<realname>
-//0 cmd
-// 1 nick
-// 2 mode
-// 3 inutile
-// 4 inutile
-// 6 realname
 std::string get_realname(std::string cmd)
 {	
 	std::string realname;
@@ -162,9 +175,9 @@ void username(std::string cmd, Client *client, Server *server)
 	if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
 	{
 		if (client->getStatus() & CONNECTED)
-			server->sendRPL(client, 462, "You may not reregister");
-		else
-			server->sendRPL(client, 462, "Use PASS command first");
+		server->sendRPL(client, 462, "You may not reregister");
+		if (!(client->getStatus() & CONNECTED))
+			server->sendNotice(client, "Use PASS command first");
 		return;
 	}
 	std::string username = parsed_input[1];
@@ -189,7 +202,8 @@ void nickname(std::string cmd, Client *client, Server *server)
 {
 	if (!(client->getStatus() & PASSWORD_OK))
 	{
-		server->sendRPL(client, 462, "Use PASS command first");
+		server->sendRPL(client, 462, "You may not reregister");
+		server->sendNotice(client, "Use PASS command first");
 		return;
 	}
 	std::vector<std::string> tab = ft_split(cmd, ' ');
@@ -276,7 +290,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 void make_command(std::string cmd, Client *client, Server* server)
 {
 	if (startsWith(cmd, "JOIN"))
-		join(cmd, client, server->get_channels());
+		join(cmd, client, server);
 	if (startsWith(cmd, "LEAVE"))
 		leave(client, server->get_channels());
 	if (startsWith(cmd, "PASS"))

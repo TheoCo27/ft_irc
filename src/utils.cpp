@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 19:20:26 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/22 17:34:34 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,4 +205,24 @@ int remove_flag(int status, int flag_to_remove)
 {
 	status &= ~flag_to_remove;
 	return status;
+}
+//Un channel valide commence par : # ou &
+//Et ne peut pas contenir : espace, contrôle, virgule.
+bool check_valid_channel_name(std::string name)
+{
+	if (name.empty() || name.length() > 50)
+		return (false);
+	if (name[0] != '#' && name[0] != '&')
+		return (false);
+	for(size_t i = 0; name[i]; i++)
+	{
+		if(std::isspace(static_cast<int>(name[i])) || name[i] == ',' || (!(std::isprint(static_cast<int>(name[i])))))
+			return false;
+	}
+	return true;
+}
+
+long getTimestamp()
+{
+    return static_cast<long>(std::time(NULL));
 }
