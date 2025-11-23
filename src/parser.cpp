@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/22 17:27:55 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/23 18:40:35 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,52 +50,67 @@ int get_channel_index(std::string name, std::vector<Channel*> channels)
     return (-1); // pas trouvé
 }
 
+void send_join_success_rpl(Channel *channel, Client *client, Server *server)
+{
+	//prevenir les users
+	std::string msg;
+	msg = client->format_RPL("JOIN :" + channel->getName());
+	channel->sendMessageToAllClients(msg, NULL);
+	server->sendRPL(client, 332, input[1] + channel->getName() + " :topic" + channel->get_topic());
+	server->sendRPL(client, 353, "= " + channel->getName() + " :" + channel->get_client_list())
+	server->sendRPL(client, 366, channel->getName() + " :End of /NAMES list");
+
+}
+
 void join(std::string cmd, Client *client, Server *server)
 {
+	std::vector<Channel*>& channels = server->get_channels();
 	std::vector<std::string> input = ft_split(cmd);
+	std::vector<std::string> channel_list = client->get_channel_list();
+
 	if (input.size() < 2)
-	{
-		server->sendRPL(client, 461, "JOIN :Not enough parameters");
-		return;
-	}
+		return(server->sendRPL(client, 461, "JOIN :Not enough parameters"));
 	if (!input[1].empty() && input[1] == "0")
 	{
 		//part from all channels
 		return;
 	}
 	if (check_valid_channel_name(input[1]) == false)
-	{
-		server->sendRPL(client, 476, input[1] + " :Bad Channel Mask");
-		return;
-	}
+		return(server->sendRPL(client, 476, input[1] + " :Bad Channel Mask"));
 	if(is_inside(client->get_channel_list(), input[1]))
-		return; // renvoie topic + names
-	
-	std::vector<Channel*>& channels = server->get_channels();
-    std::string input_name = trim_cmd(cmd);
-	std::string channel_name = "#";
-	channel_name += input_name;
-    int i = get_channel_index(channel_name, channels);
-	std::vector<std::string> channel_list = client->get_channel_list();
-	if (is_inside(channel_list, channel_name) == true)
 		return;
+	if(channel_list.size() >= 10)
+		return(server->sendRPL(client, 405, input[1] + " :You have joined too many channels"));
+	
+    int i = get_channel_index(input[1], channels);
     if (i != -1)
     {
+		if(channels[i]->is_invite_only() == 1 && is_inside(channels[i]->get_invited_nick(), client->getNickname()) == false)
+			return(server->sendRPL(client, 473, input[1] + " :Cannot join channel (+i)"));
+		if (channels[i]->check_has_password == 1)
+			if (input.size() < 3 || input[2] != channels[i]->get_pass())
+				return(server->sendRPL(client, 475, input[1] " :Cannot join channel (+k)"));
+		if(channels[i]->check_has_limit_user() == true && channels[i]->getNbClient() == channels[i]->get_limit_user())
+			return(server->sendRPL(client, 471, input[1] + ":Cannot join channel (+l)"));
         channels[i]->addClient(client);
-		channel_list.push_back(channel_name);
-        client->setChannelName(channel_name);
+		channel_list.push_back(input[1]); //ajoute le channel a la liste client
+        //client->setChannelName(input[1]);
         //client->setStatus(IN_CHANNEL);
-        std::cout << client->getUsername() << " has joined " << channel_name << std::endl;
+        std::cout << client->getNickname() << " has joined " << input[1] << std::endl;
+		send_join_success_rpl(channels[i], client, server);
     }
     else
     {
-        Channel *new_channel = new Channel(channel_name);
-        channels.push_back(new_channel);
-        new_channel->addClient(client);
-		channel_list.push_back(channel_name);
+        Channel *new_channel = new Channel(input[1]);
+		std::vector<Client *> new_channel_op_lst = new_channel->get_operators();
+        channels.push_back(new_channel); // ajoute le channel a la liste server
+        new_channel->addClient(client); // ajoute le client a la liste du channel
+		channel_list.push_back(input[1]); // ajoute le channel a la liste du client
+		new_channel_op_lst.push_back(client); // ajoute le client a la liste des op du channel
         client->setChannelName(new_channel->getName());
         //client->setStatus(IN_CHANNEL);
-        std::cout << "Channel " << channel_name << " created\n";
+        std::cout << "Channel " << input[1] << " created\n";
+		send_join_success_rpl(new_channel, client, server);
     }
 }
 

@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/23 15:43:58 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/23 18:31:07 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Channel::Channel(std::string name)
 {
     this->name = name;
+    topic = "*";
 	nb_client = 0;
     topic_restricted = 0;
     has_password = 0;
@@ -32,12 +33,12 @@ Channel::~Channel()
 void Channel::addClient(Client* client)
 {
     nb_client++;
-    std::string welcome = "Welcome to ";
-    welcome.append(this->name);
-    welcome.append(" channel\n");
-    sendMessage(client->getClientFd(), welcome);
-    std::string joined = client->getUsername() + " has joined channel\n";
-    sendMessageToAllClients(joined, client);
+    // std::string welcome = "Welcome to ";
+    // welcome.append(this->name);
+    // welcome.append(" channel\n");
+    // sendMessage(client->getClientFd(), welcome);
+    // std::string joined = client->getUsername() + " has joined channel\n";
+    // sendMessageToAllClients(joined, client);
 	clients.push_back(client);
 }
 
@@ -68,25 +69,25 @@ void Channel::removeClient(Client* client)
         return;
     clients.erase(clients.begin() + index);
     nb_client--;
-    std:: string left = client->getUsername() + " has left channel\n";
-    sendMessageToAllClients(left, NULL);
+    // std:: string left = client->getUsername() + " has left channel\n";
+    // sendMessageToAllClients(left, NULL);
 }
 
 void Channel::sendMessageToAllClients(const std::string& message, Client *client)
 {
     std::string from;
-    if (client != NULL)
-    {
-        from = "From ";
-        from.append(client->getUsername());
-        from.append(": ");
-        from.append(message);
-    }
+    // if (client != NULL)
+    // {
+    //     from = "From ";
+    //     from.append(client->getUsername());
+    //     from.append(": ");
+    //     from.append(message);
+    // }
     for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
     {
         Client* ptr = *it;
         if (client != NULL && client != ptr)
-            send(ptr->getClientFd(), from.c_str(), from.size(), 0);
+            send(ptr->getClientFd(), message.c_str(), from.size(), 0);
         else if(client == NULL)
             send(ptr->getClientFd(), message.c_str(), message.size(), 0);
     }
@@ -106,6 +107,50 @@ std::string Channel::receiveMessage(int client_fd)
 	buffer[bytes] = '\0';
 	return std::string(buffer);
 }
+
+
+bool Channel::is_op(Client *client)
+{
+    for (std::vector<Client*>::iterator it = operators.begin(); it != operators.end(); ++it)
+    {
+        if (*it == client)
+            return true;
+    }
+    return false;
+}
+
+
+bool Channel::is_voiced(Client *client)
+{
+    for (std::vector<Client*>::iterator it = voiced.begin(); it != voiced.end(); ++it)
+    {
+        if (*it == client)
+            return true;
+    }
+    return false;
+}
+
+
+std::string Channel::get_client_list()
+{
+    std::string list = "";
+
+    for(std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if(list != "")
+            list + " ";
+        Client* client = *it;
+        if(is_op(client) == true)
+            list + "@";
+        if(is_voiced(client) == true)
+            list + "+";
+        list + client->getNickname();
+    }
+    return list;
+}
+
+
+
 //getters
 std::string Channel::getName() const{ return (name);}
 int Channel::getNbClient() const{return (nb_client);}

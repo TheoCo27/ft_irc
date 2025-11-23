@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/23 15:35:35 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/23 18:31:44 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,9 @@ class Channel
 		bool is_invite_only();
 		int get_limit_user();
 		std::time_t get_creation_time();
-
+		std::string get_client_list();
+		bool is_op(Client *client);
+		bool is_voiced(Client *client);
 		
 		//setters
 		void setName(const std::string& name);
