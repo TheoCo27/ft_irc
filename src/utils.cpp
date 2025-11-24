@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 17:47:29 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 21:49:51 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,105 +102,6 @@ std::vector<std::string> ft_split(const std::string &s, char delim)
     return result;
 }
 
-static bool is_valid_char_for_nickname(char c)
-{
-	char set[] = "-[]{}|`^\\";
-	
-	if (!(std::isprint(static_cast<int>(c))))
-		return false;
-	if (std::isalpha(static_cast<int>(c)) || std::isdigit(static_cast<int>(c)))
-		return true;
-	for(int i = 0; set[i]; i++)
-		if (c == set[i])
-			return true;
-	return false;
-}
-
-bool check_valid_nickname(std::string nick)
-{
-	if (nick.empty())
-		return false;
-	if(nick.length() > 9)
-		return false;
-	if (std::isalpha(static_cast<int>(nick[0])) == false)
-		return false;
-	for(size_t i = 0; nick[i]; i++)
-		if(is_valid_char_for_nickname(nick[i]) == false)
-			return false;
-	return true;
-}
-
-static bool is_valid_char_for_username(char c)
-{
-	char set[] = ". _ - ~";
-	
-	if (!(std::isprint(static_cast<int>(c))))
-		return false;
-	if (std::isalpha(static_cast<int>(c)) || std::isdigit(static_cast<int>(c)))
-		return true;
-	for(int i = 0; set[i]; i++)
-		if (c == set[i])
-			return true;
-	return false;
-}
-
-bool check_valid_username(std::string user)
-{
-	if (user.empty())
-		return false;
-	if(user.length() > 10)
-		return false;
-	for(size_t i = 0; user[i]; i++)
-		if(is_valid_char_for_username(user[i]) == false)
-			return false;
-	return true;
-}
-
-bool check_valid_realname(std::string rname)
-{
-	std::string output(rname);
-
-	if(output.length() > 50)
-		return false;
-	for(size_t i = 0; output[i]; i++)
-		if(!(std::isprint(static_cast<int>(rname[i]))))
-			return false;
-	return true;
-}
-
-std::string trunc(const std::string& str, size_t len_to_trunc)
-{
-    if (str.size() <= len_to_trunc)
-        return str;
-    return str.substr(0, len_to_trunc);
-}
-
-std::string get_valid_username(std::string user)
-{
-	std::string output(user);
-
-	if(user.length() > 10)
-		output = trunc(user, 10);
-	for(size_t i = 0; output[i]; i++)
-		if(is_valid_char_for_username(output[i]) == false)
-			output[i] = 'o';
-	return output;
-}
-
-std::string get_valid_realname(std::string rname)
-{
-	std::string output(rname);
-
-	if(output.length() > 50)
-		output = trunc(rname, 50);
-	if (output[0] == ':')
-		output.erase(0, 1);
-	for(size_t i = 0; output[i]; i++)
-		if(!(std::isprint(static_cast<int>(rname[i]))))
-			output[i] = 'o';
-	return output;
-}
-
 int remove_flag(int status, int flag_to_remove)
 {
 	status &= ~flag_to_remove;
@@ -208,26 +109,11 @@ int remove_flag(int status, int flag_to_remove)
 }
 //Un channel valide commence par : # ou &
 //Et ne peut pas contenir : espace, contrôle, virgule.
-bool check_valid_channel_name(std::string name)
-{
-	if (name.empty() || name.length() > 50)
-		return (false);
-	if (name[0] != '#' && name[0] != '&')
-		return (false);
-	for(size_t i = 0; name[i]; i++)
-	{
-		if(std::isspace(static_cast<int>(name[i])) || name[i] == ',' || (!(std::isprint(static_cast<int>(name[i])))))
-			return false;
-	}
-	return true;
-}
 
 long getTimestamp()
 {
     return static_cast<long>(std::time(NULL));
 }
-
-
 
 int ft_sto_ui(std::string str)
 {

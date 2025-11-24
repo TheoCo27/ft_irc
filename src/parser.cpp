@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/24 19:44:32 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 23:32:03 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,13 +169,12 @@ std::string get_realname(std::string cmd)
 
 void connect_client(Client *client, Server *server)
 {
-	std::cout << "inside connect client\n";
 	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) == (PASSWORD_OK | NICK_OK | USER_OK))
 	{
 		client->setStatus(client->getStatus() | CONNECTED);
 		server->sendRPL(client, 001, "Welcome to the IRC network, " + client->getNickname() + "!" + client->getUsername() + "@" + client->getRealname());
 		server->sendRPL(client, 002, "Your host is server.42irc, running version 1.0");
-		server->sendRPL(client, 003, "This server was created on 2025/11/07 00:04:20");
+		server->sendRPL(client, 003, "This server was created on 2025/05/12 18:10:52");
 		server->sendRPL(client, 004,  "server.42irc 1.0 o o");
 	}
 }
@@ -314,9 +313,6 @@ std::string get_channel_pass(std::string cmd)
 
 void mode(std::string cmd, Client *client, Server* server)
 {
-	//gerer MODE #chan -> truc speciale a envoyer
-	//gerer MODE +xyz -> unknown mode
-
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	if(input.size() <= 1)
 		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));	
@@ -328,7 +324,18 @@ void mode(std::string cmd, Client *client, Server* server)
 		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
 	if (!channel->is_client(client))
 		return(server->sendRPL(client, 442, channel->getName() + " :You're not on that channel"));
-	if(input.size() > 2 && (input[2] == "+k" || input[2] == "+l" || input[2] == "+o" || input[2] == "-o") && input.size() < 4)
+	//basic check up there, special case down there
+	if (input.size() == 2)
+	{
+		std::stringstream ss;
+		server->sendRPL(client, 324, channel->get_mode_list());
+		ss << channel->getName() << " " << channel->get_creation_time();
+		server->sendRPL(client, 329, ss.str());
+		return;
+	}
+	if(is_valid_mode(input[2]) == false)
+		return(server->sendRPL(client, 472, "Unkown mode char"));
+	if((input[2] == "+k" || input[2] == "+l" || input[2] == "+o" || input[2] == "-o") && input.size() < 4)
 		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));
 	if((input[2] == "+o" || input[2] == "-o") && !(channel->is_client(server->get_client_by_nick(input[3])))  )
 		return(server->sendRPL(client, 441, input[3] + " " + channel->getName() + " :User not in channel"));
@@ -357,7 +364,7 @@ void mode(std::string cmd, Client *client, Server* server)
 			return(server->sendNotice(client, "MODE (+l): invalid limit"));
 		channel->set_limit_user(std::atoi(input[3].c_str()));
 	}
-	if(input[2] == "+o" || input[2] == "-o")
+	if((input[2] == "+o" || input[2] == "-o"))
 	{
 		Client *new_op = server->get_client_by_nick(input[3]);
 		if(input[2] == "+o")
@@ -373,12 +380,14 @@ void mode(std::string cmd, Client *client, Server* server)
 			msg += " ";
 		msg += input[i];
 		i++;
+		if (input.size() == 2)
+			continue;
 		if ((input[2] == "+i" || input[2] == "-i" || input[2] == "+t" || input[2] == "-t" || input[2] == "-k" || input[2] == "+k"|| input[2] == "-l") && i > 2)
 			break;
 		if ((input[2] == "+l" || input[2] == "-o" || input[2] == "+o") && i > 3)
 			break;
 	}
-	if (input[2] == "-k" || input[i] == "+k")
+	if ((input[2] == "-k" || input[i] == "+k"))
 		msg = msg + " " + channel->get_pass();
 	msg = client->format_RPL(msg);
 	channel->sendMessageToAllClients(msg, NULL);

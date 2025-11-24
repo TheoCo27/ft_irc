@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 17:47:58 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 23:27:30 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,3 +37,4 @@ std::string get_valid_realname(std::string rname);
 std::string get_valid_username(std::string user);
 long getTimestamp();
 int ft_sto_ui(std::string str);
+bool is_valid_mode(std::string mode);

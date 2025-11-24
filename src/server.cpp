@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 11:34:25 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 22:05:22 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,6 +283,8 @@ std::vector<std::string>& Server::get_nickname_list(void){return nickname_list;}
 
 Channel *Server::get_channel_by_name(std::string channel_name)
 {
+	if (channel_name.empty())
+		return (NULL);
 	for(std::vector<Channel *>::iterator it = this->channels.begin(); it != this->channels.end(); ++it)
 	{
 		Channel *check = *it;
