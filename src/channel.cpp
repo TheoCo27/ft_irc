@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 11:40:18 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 17:10:36 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,16 @@ bool Channel::is_voiced(Client *client)
     return false;
 }
 
+bool Channel::is_client(Client *client)
+{
+    for (std::vector<Client*>::iterator it = clients.begin(); it != clients.end(); ++it)
+    {
+        if (*it == client)
+            return true;
+    }
+    return false;
+}
+
 
 std::string Channel::get_client_list()
 {
@@ -150,6 +160,19 @@ std::string Channel::get_client_list()
     return list;
 }
 
+void Channel::remove_op(Client *client)
+{
+	std::vector<Client*>::iterator it = operators.begin();
+
+    for (; it != operators.end(); ++it)
+    {
+        if (*it == client)
+        {
+            operators.erase(it);
+            return;
+        }
+    }
+}
 
 
 //getters

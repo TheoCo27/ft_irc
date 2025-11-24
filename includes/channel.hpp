@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/23 18:31:44 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 17:10:10 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,11 @@ class Channel
 		int get_client_index(Client *client);
 		void sendMessage(int client_fd, const std::string& message);
 		std::string receiveMessage(int client_fd);
+		void Channel::remove_op(Client *client);
+
 		//getters
 		int getNbClient() const;
 		std::string getName() const;
-		//
 		std::string get_pass();
 		std::string get_topic();
 		std::vector<Client *>& get_operators();
@@ -61,11 +62,11 @@ class Channel
 		std::string get_client_list();
 		bool is_op(Client *client);
 		bool is_voiced(Client *client);
+		bool is_client(Client *client);
 		
 		//setters
 		void setName(const std::string& name);
 		void setNbClient(int nb_client);
-		//
 		void set_pass(std::string pass);
 		void set_topic(std::string topic);
 		void set_topic_restricted(bool is_restricted);
