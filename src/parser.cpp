@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/24 23:32:03 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 23:50:38 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -391,6 +391,20 @@ void mode(std::string cmd, Client *client, Server* server)
 		msg = msg + " " + channel->get_pass();
 	msg = client->format_RPL(msg);
 	channel->sendMessageToAllClients(msg, NULL);
+}
+
+
+void ping(std::string cmd, Client *client, Server *server)
+{
+	std::vector<std::string> input = ft_split(cmd);
+	std::string arg, msg;
+
+
+	if(input.size() < 2)
+		return(server->sendRPL(client, 409, ":No origin specified"));
+	arg = remove_1st_word(cmd);
+	msg = ":server.42irc PONG server :" + arg;
+	server->sendMessage(client->getClientFd(), msg);
 }
 
 void make_command(std::string cmd, Client *client, Server* server)
