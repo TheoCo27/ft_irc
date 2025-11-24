@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 17:10:36 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 19:41:34 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,29 @@ void Channel::remove_op(Client *client)
         }
     }
 }
+
+
+std::string Channel::get_mode_list()
+{
+	std::stringstream ss(this->name);
+
+	if(invite_only || topic_restricted || has_password || has_limit_user)
+		ss << " +";
+	if(invite_only)
+		ss << "i";
+	if(topic_restricted)
+		ss << "t";
+	if(has_password)
+		ss << "k";
+	if(has_limit_user)
+		ss << "l";
+	if(has_password)
+		ss << " " << this->password;
+	if(has_limit_user)
+		ss << " " << this->limit_user;
+	return (ss.str());
+}
+
 
 
 //getters

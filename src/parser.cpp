@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/24 18:27:32 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 19:44:32 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -304,13 +304,22 @@ void privmsg(std::string cmd, Client *client, Server *server)
 	}
 }
 
+std::string get_channel_pass(std::string cmd)
+{	
+	std::string channel_pass(cmd);
+	for(int i = 0; i < 3; i++)
+		channel_pass = remove_1st_word(channel_pass);
+	return channel_pass;
+}
+
 void mode(std::string cmd, Client *client, Server* server)
 {
-	//gerer MODE sans argument -> err 461
 	//gerer MODE #chan -> truc speciale a envoyer
-	//recuperer en propre le mot de passe si besoin
+	//gerer MODE +xyz -> unknown mode
 
 	std::vector<std::string> input = ft_split(cmd, ' ');
+	if(input.size() <= 1)
+		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));	
 	Channel *channel = server->get_channel_by_name(input[1]);
 	std::string password;
 	if (!channel)
@@ -333,11 +342,11 @@ void mode(std::string cmd, Client *client, Server* server)
 	if(input[2] == "-t")
 		channel->set_topic_restricted(false);
 	if(input[2] == "-k")
-		channel->set_has_password(false);//cas particulier
+		channel->set_has_password(false);
 	if(input[2] == "+k")
 	{
 		channel->set_has_password(true);
-		channel->set_pass(input[3]);//attention ici c est faux si le mot de passe contient des espaces ce qui est autorise
+		channel->set_pass(get_channel_pass(cmd));
 	}
 	if(input[2] == "-l")
 		channel->set_has_limit_user(false);
@@ -360,7 +369,8 @@ void mode(std::string cmd, Client *client, Server* server)
 	int i = 0;
 	while(i < input.size())
 	{
-		msg += " ";
+		if(i != 0)
+			msg += " ";
 		msg += input[i];
 		i++;
 		if ((input[2] == "+i" || input[2] == "-i" || input[2] == "+t" || input[2] == "-t" || input[2] == "-k" || input[2] == "+k"|| input[2] == "-l") && i > 2)
@@ -372,7 +382,6 @@ void mode(std::string cmd, Client *client, Server* server)
 		msg = msg + " " + channel->get_pass();
 	msg = client->format_RPL(msg);
 	channel->sendMessageToAllClients(msg, NULL);
-	
 }
 
 void make_command(std::string cmd, Client *client, Server* server)

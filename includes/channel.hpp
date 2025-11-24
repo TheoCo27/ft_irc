@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 17:10:10 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 19:23:08 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class Channel
 		bool is_op(Client *client);
 		bool is_voiced(Client *client);
 		bool is_client(Client *client);
-		
+		std::string get_mode_list();
 		//setters
 		void setName(const std::string& name);
 		void setNbClient(int nb_client);
