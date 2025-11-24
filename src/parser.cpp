@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/24 17:14:37 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/24 18:27:32 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,8 +306,13 @@ void privmsg(std::string cmd, Client *client, Server *server)
 
 void mode(std::string cmd, Client *client, Server* server)
 {
+	//gerer MODE sans argument -> err 461
+	//gerer MODE #chan -> truc speciale a envoyer
+	//recuperer en propre le mot de passe si besoin
+
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	Channel *channel = server->get_channel_by_name(input[1]);
+	std::string password;
 	if (!channel)
 		return(server->sendRPL(client, 403, channel->getName() + " :No such channel"));
 	if (!channel->is_op(client))
@@ -317,7 +322,7 @@ void mode(std::string cmd, Client *client, Server* server)
 	if(input.size() > 2 && (input[2] == "+k" || input[2] == "+l" || input[2] == "+o" || input[2] == "-o") && input.size() < 4)
 		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));
 	if((input[2] == "+o" || input[2] == "-o") && !(channel->is_client(server->get_client_by_nick(input[3])))  )
-		return(server->sendRPL(client, 441, input[3] + " " + channel->getName() + " :They aren't on that channel"));
+		return(server->sendRPL(client, 441, input[3] + " " + channel->getName() + " :User not in channel"));
 	//error management on top mode controle down here
 	if (input[2] == "+i")
 		channel->set_invite_only(true);
@@ -328,31 +333,45 @@ void mode(std::string cmd, Client *client, Server* server)
 	if(input[2] == "-t")
 		channel->set_topic_restricted(false);
 	if(input[2] == "-k")
-		channel->set_has_password(false);
+		channel->set_has_password(false);//cas particulier
 	if(input[2] == "+k")
 	{
 		channel->set_has_password(true);
-		//quid check caractere non imprimables + longueur de la string
-		channel->set_pass(input[3]);
+		channel->set_pass(input[3]);//attention ici c est faux si le mot de passe contient des espaces ce qui est autorise
 	}
 	if(input[2] == "-l")
 		channel->set_has_limit_user(false);
 	if (input[2] == "+l")
 	{
 		channel->set_has_limit_user(true);
-		//quid check inferieur ou egale a zero + is_int
+		if (ft_sto_ui(input[3]) <= 0)
+			return(server->sendNotice(client, "MODE (+l): invalid limit"));
 		channel->set_limit_user(std::atoi(input[3].c_str()));
 	}
 	if(input[2] == "+o" || input[2] == "-o")
 	{
-		//quid client introuvable / pas dans le channel / deja op_pas_op
 		Client *new_op = server->get_client_by_nick(input[3]);
 		if(input[2] == "+o")
 			channel->get_operators().push_back(new_op);
 		if(input[2] == "-o")
 			channel->remove_op(new_op);
 	}
-
+	std::string msg;
+	int i = 0;
+	while(i < input.size())
+	{
+		msg += " ";
+		msg += input[i];
+		i++;
+		if ((input[2] == "+i" || input[2] == "-i" || input[2] == "+t" || input[2] == "-t" || input[2] == "-k" || input[2] == "+k"|| input[2] == "-l") && i > 2)
+			break;
+		if ((input[2] == "+l" || input[2] == "-o" || input[2] == "+o") && i > 3)
+			break;
+	}
+	if (input[2] == "-k" || input[i] == "+k")
+		msg = msg + " " + channel->get_pass();
+	msg = client->format_RPL(msg);
+	channel->sendMessageToAllClients(msg, NULL);
 	
 }
 

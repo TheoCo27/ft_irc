@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/22 17:34:34 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 17:47:29 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,4 +225,24 @@ bool check_valid_channel_name(std::string name)
 long getTimestamp()
 {
     return static_cast<long>(std::time(NULL));
+}
+
+
+
+int ft_sto_ui(std::string str)
+{
+	long value = 0;
+
+	if (str.size() > 10)
+		return -1;
+	for (size_t i = 0; str[i]; i++)
+	{
+		if (!std::isdigit(static_cast<int>(str[i])))
+			return -1;
+	}
+	value = std::atol(str.c_str());
+	if (value > 2147483647 || value < -2147483648)
+		return -1;
+	return (static_cast<int>(value));
+
 }
