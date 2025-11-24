@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 18:47:48 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 10:33:08 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@
 enum ClientStatus
 {
 	EMPTY = 0,
-	PASSWORD_OK = 1 < 1,
-	NICK_OK = 1 < 2,
-	USER_OK = 1 < 3,
-	CONNECTED = 1 < 4,
-	IN_CHANNEL = 1 < 5,
-	DISCONNECTED = 1 < 6
+	PASSWORD_OK = 1 << 2,
+	USER_OK = 1 << 3,
+	NICK_OK = 1 << 4,
+	CONNECTED = 1 << 5,
+	IN_CHANNEL = 1 << 6,
+	DISCONNECTED = 1 << 7
 };
 
 class Client

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 18:29:46 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 11:34:25 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void Server::acceptClient() {
 		close(client_fd);
 		return;
 	}
-	sendMessage(client_fd, "Please type server password!\n");
+	//sendMessage(client_fd, "Please type server password!\n");
 }
 
 void Server::handleClient(int client_fd) {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   client.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/21 18:52:41 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 11:51:30 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void Client::remove_channel_fromchannelList(std::string channel_name)
 }
 std::string Client::format_RPL(std::string msg)
 {
-	std::string reply = ":" + this->_nickname + "!" + this->_username + "@" + this->_realname + msg;
+	std::string reply = ":" + this->_nickname + "!" + this->_username + "@" + this->_realname + msg + "\r\n";
 	return reply;
 }
 

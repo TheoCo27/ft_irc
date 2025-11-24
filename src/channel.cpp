@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/23 18:31:07 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 11:40:18 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,15 +52,15 @@ int Channel::get_client_index(Client *client)
         return (-1);
 }
 
-static int get_operators_index(Client *client, std::vector<Client*> op_list)
-{
-    std::vector<Client*>::iterator it = std::find(op_list.begin(), op_list.end(), client);
-    if (it != op_list.end()) {
-        return (it - op_list.begin());
-    } 
-    else
-        return (-1);
-}
+// static int get_operators_index(Client *client, std::vector<Client*> op_list)
+// {
+//     std::vector<Client*>::iterator it = std::find(op_list.begin(), op_list.end(), client);
+//     if (it != op_list.end()) {
+//         return (it - op_list.begin());
+//     } 
+//     else
+//         return (-1);
+// }
 void Channel::removeClient(Client* client)
 {
     //need to update with operators management
@@ -138,14 +138,15 @@ std::string Channel::get_client_list()
     for(std::vector<Client *>::iterator it = clients.begin(); it != clients.end(); ++it)
     {
         if(list != "")
-            list + " ";
+            list += " ";
         Client* client = *it;
         if(is_op(client) == true)
-            list + "@";
+            list += "@";
         if(is_voiced(client) == true)
-            list + "+";
-        list + client->getNickname();
+            list += "+";
+        list += client->getNickname();
     }
+	std::cout << "client list for channel " << this->name << " is : " << list << std::endl;
     return list;
 }
 
@@ -160,10 +161,10 @@ std::string Channel::get_topic(){return(topic);}
 std::vector<Client *>& Channel::get_operators(){return(operators);}
 std::vector<Client *>& Channel::get_voiced(){return(voiced);}
 std::vector<std::string>& Channel::get_invited_nick(){return(invited_nick);}
-bool Channel::is_topic_restricted(){return(is_topic_restricted);}
+bool Channel::is_topic_restricted(){return(topic_restricted);}
 bool Channel::check_has_password(){return(has_password);}
 bool Channel::check_has_limit_user(){return(has_limit_user);}
-bool Channel::is_invite_only(){return(is_invite_only);}
+bool Channel::is_invite_only(){return(invite_only);}
 int Channel::get_limit_user(){return(limit_user);}
 std::time_t Channel::get_creation_time(){return(creation_time);}
 

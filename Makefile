@@ -55,6 +55,9 @@ fclean: clean
 re: fclean all
 
 run:
-	bash ./run_irc.sh
+	bash ./run.sh
 
-.PHONY: all clean fclean re run
+s:
+	./ircserv 6667 theo
+
+.PHONY: all clean fclean re run s

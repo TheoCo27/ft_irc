@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/23 18:40:35 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/24 11:52:08 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ void send_join_success_rpl(Channel *channel, Client *client, Server *server)
 {
 	//prevenir les users
 	std::string msg;
-	msg = client->format_RPL("JOIN :" + channel->getName());
+	msg = client->format_RPL(" JOIN " + channel->getName());
 	channel->sendMessageToAllClients(msg, NULL);
-	server->sendRPL(client, 332, input[1] + channel->getName() + " :topic" + channel->get_topic());
-	server->sendRPL(client, 353, "= " + channel->getName() + " :" + channel->get_client_list())
+	server->sendRPL(client, 332, channel->getName() + " :" + channel->get_topic());
+	server->sendRPL(client, 353, "= " + channel->getName() + " :" + channel->get_client_list());
 	server->sendRPL(client, 366, channel->getName() + " :End of /NAMES list");
 
 }
@@ -65,8 +65,8 @@ void send_join_success_rpl(Channel *channel, Client *client, Server *server)
 void join(std::string cmd, Client *client, Server *server)
 {
 	std::vector<Channel*>& channels = server->get_channels();
-	std::vector<std::string> input = ft_split(cmd);
-	std::vector<std::string> channel_list = client->get_channel_list();
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	std::vector<std::string>& channel_list = client->get_channel_list();
 
 	if (input.size() < 2)
 		return(server->sendRPL(client, 461, "JOIN :Not enough parameters"));
@@ -87,12 +87,12 @@ void join(std::string cmd, Client *client, Server *server)
     {
 		if(channels[i]->is_invite_only() == 1 && is_inside(channels[i]->get_invited_nick(), client->getNickname()) == false)
 			return(server->sendRPL(client, 473, input[1] + " :Cannot join channel (+i)"));
-		if (channels[i]->check_has_password == 1)
+		if (channels[i]->check_has_password() == 1)
 			if (input.size() < 3 || input[2] != channels[i]->get_pass())
-				return(server->sendRPL(client, 475, input[1] " :Cannot join channel (+k)"));
+				return(server->sendRPL(client, 475, input[1] + " :Cannot join channel (+k)"));
 		if(channels[i]->check_has_limit_user() == true && channels[i]->getNbClient() == channels[i]->get_limit_user())
 			return(server->sendRPL(client, 471, input[1] + ":Cannot join channel (+l)"));
-        channels[i]->addClient(client);
+        channels[i]->addClient(client); // ajoute le client au channel
 		channel_list.push_back(input[1]); //ajoute le channel a la liste client
         //client->setChannelName(input[1]);
         //client->setStatus(IN_CHANNEL);
@@ -102,12 +102,12 @@ void join(std::string cmd, Client *client, Server *server)
     else
     {
         Channel *new_channel = new Channel(input[1]);
-		std::vector<Client *> new_channel_op_lst = new_channel->get_operators();
+		std::vector<Client *>& new_channel_op_lst = new_channel->get_operators();
         channels.push_back(new_channel); // ajoute le channel a la liste server
         new_channel->addClient(client); // ajoute le client a la liste du channel
 		channel_list.push_back(input[1]); // ajoute le channel a la liste du client
 		new_channel_op_lst.push_back(client); // ajoute le client a la liste des op du channel
-        client->setChannelName(new_channel->getName());
+        //client->setChannelName(new_channel->getName());
         //client->setStatus(IN_CHANNEL);
         std::cout << "Channel " << input[1] << " created\n";
 		send_join_success_rpl(new_channel, client, server);
@@ -152,7 +152,7 @@ void pass(std::string cmd, Client *client, Server* server)
 	if (client->getStatus() == EMPTY) {
 		if (server->check_password(input)) {
 			client->setStatus(PASSWORD_OK);
-			server->sendMessage(client->getClientFd(), "Password OK. Please type nickname:\n");
+			//server->sendNotice(client, "Password OK. Please type nickname:");
 		} else {
 			server->sendRPL(client, 464, ":Password incorrect");
 			server->closeClient(client->getClientFd());
@@ -161,25 +161,27 @@ void pass(std::string cmd, Client *client, Server* server)
 }
 std::string get_realname(std::string cmd)
 {	
-	std::string realname;
+	std::string realname(cmd);
 	for(int i = 0; i < 4; i++)
-		realname = remove_1st_word(cmd);
+		realname = remove_1st_word(realname);
 	return realname;
 }
 
 void connect_client(Client *client, Server *server)
 {
-	if(client->getStatus() & PASSWORD_OK & NICK_OK & USER_OK)
+	std::cout << "inside connect client\n";
+	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) == (PASSWORD_OK | NICK_OK | USER_OK))
 	{
 		client->setStatus(client->getStatus() | CONNECTED);
-		server->SendRPL(ClientFD, 001, "Welcome to the IRC network, " + client->getNickname() + "!" + client->getUsername() + "@" + client->getRealname());
-		server->SendRPL(ClientFD, 002, "Your host is server.42irc" + ", running version 1.0");
-		server->SendRPL(ClientFD, 003, "This server was created on 2025/11/07 00:04:20");
-		server->SendRPL(ClientFD, 004,  "server.42irc 1.0 o o");
+		server->sendRPL(client, 001, "Welcome to the IRC network, " + client->getNickname() + "!" + client->getUsername() + "@" + client->getRealname());
+		server->sendRPL(client, 002, "Your host is server.42irc, running version 1.0");
+		server->sendRPL(client, 003, "This server was created on 2025/11/07 00:04:20");
+		server->sendRPL(client, 004,  "server.42irc 1.0 o o");
 	}
 }
 void username(std::string cmd, Client *client, Server *server)
 {
+	std::cout << "inside user cmd\n";
 	std::vector<std::string> parsed_input = ft_split(cmd, ' ');
 
 	if (parsed_input.size() < 5)
@@ -199,13 +201,13 @@ void username(std::string cmd, Client *client, Server *server)
 	if (check_valid_username(username) == false)
 	{
 		username = get_valid_username(username);
-		server->sendNotice(client, "Invalid username has been normalized")
+		server->sendNotice(client, "Invalid username has been normalized");
 
 	}
 	std::string mode = parsed_input[2];
 	std::string realname = get_realname(cmd);
 	if (check_valid_realname(realname) == false)
-		server->sendNotice(client, "Invalid realname has been normalized")
+		server->sendNotice(client, "Invalid realname has been normalized");
 	realname = get_valid_realname(realname);
 	client->setUsername(username);
 	client->setRealname(realname);
@@ -250,12 +252,12 @@ void nickname(std::string cmd, Client *client, Server *server)
 	}
 	else if(client->getStatus() & CONNECTED || client->getStatus() & IN_CHANNEL)
 	{
-		std::vector<Channel *> channel_list = client->get_channel_list();
+		std::vector<std::string> channel_list = client->get_channel_list();
 		std::string msg = " NICK:" + nick + "\r\n";
 		msg = client->format_RPL(nick);
 		for(size_t i = 0; i < channel_list.size(); i++)
 		{
-			Channel* channel = channel_list[i];
+			Channel* channel = server->get_channel_by_name(channel_list[i]);
 			channel->sendMessageToAllClients(msg, client);
 		}
 		remove_from_vec(nickname_list, client->getNickname());
