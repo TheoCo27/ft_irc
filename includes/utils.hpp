@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 01:03:09 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 22:31:19 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <vector>
 #include <algorithm>
 #include "client.hpp"
+#include "server.hpp"
 #include <sstream>
 #include <ctime>
 
@@ -39,3 +40,5 @@ long getTimestamp();
 int ft_sto_ui(std::string str);
 bool is_valid_mode(std::string mode);
 std::string is_valid_topic(std::string topic);
+void init_bot(Client& bot, Server* server);
+void make_bot_speak(Client *bot, Server *server, Client *dest);

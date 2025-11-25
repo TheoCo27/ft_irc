@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 00:57:39 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 22:21:37 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ bool check_valid_nickname(std::string nick)
 	if (nick.empty())
 		return false;
 	if(nick.length() > 9)
+		return false;
+	if(nick == "bot")
 		return false;
 	if (std::isalpha(static_cast<int>(nick[0])) == false)
 		return false;

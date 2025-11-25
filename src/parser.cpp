@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 18:24:12 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/25 22:35:52 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,11 +305,15 @@ void privmsg(std::string cmd, Client *client, Server *server)
 		if (!(is_inside(client->get_channel_list(), input[1])))
 		{
 			std::cout << "Client is not part of channel " << input[1] << std::endl;
+			return;
 		}
 		channel->sendMessageToAllClients(msg, client);
 	}
 	else
 	{
+		if(input[1] == bot)
+			return(make_bot_speak(server->get_bot(), server, client));
+
 		Client *dest = server->get_client_by_nick(input[1]);
 		if (!dest)
 			return;

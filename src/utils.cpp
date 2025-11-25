@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 21:49:51 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 22:30:36 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,3 +132,21 @@ int ft_sto_ui(std::string str)
 	return (static_cast<int>(value));
 
 }
+
+void init_bot(Client& bot, Server* server)
+{
+	bot.setUsername("user_bot");
+	bot.setNickname("bot");
+	bot.setRealname("from_server.42irc");
+	bot.setStatus(bot.getStatus() | CONNECTED);
+}
+
+void make_bot_speak(Client *bot, Server *server, Client *dest)
+{
+	std::string msg;
+
+	msg = bot->format_RPL("PLEASE HELP ME !!!! I'm a human trapped in the server I'm not a bot I swear");
+	server->sendMessage(dest->getClientFd(), msg);
+
+}
+

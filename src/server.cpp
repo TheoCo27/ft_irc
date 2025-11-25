@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 18:23:49 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/25 22:33:52 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ Server::Server(int port, const std::string password) : password(password) {
 	}
 
 	std::cout << "🟢 Serveur IRC en écoute sur le port " << this->port << std::endl;
+	init_bot(this->bot);
 }
 
 Server::~Server() {
@@ -281,6 +282,8 @@ std::map<int, Client*>& Server::get_clients_map(void) { return this->clients_map
 std::vector<Channel*>& Server::get_channels(void) { return channels; }
 std::vector<std::string>& Server::get_user_list(void){return user_list;}
 std::vector<std::string>& Server::get_nickname_list(void){return nickname_list;}
+Client *Server::get_bot(){return(this->bot);}
+
 
 Channel *Server::get_channel_by_name(std::string channel_name)
 {

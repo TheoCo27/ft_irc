@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 10:13:18 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/25 22:33:05 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ private:
 	std::vector<Channel*> channels;      // liste des channels IRC
 	std::vector<std::string> user_list;
 	std::vector<std::string> nickname_list;
+	Client* bot;
 
 public:
 	// Constructeur / Destructeur
@@ -79,6 +80,7 @@ public:
 	std::vector<std::string>& get_nickname_list(void);
 	Channel *get_channel_by_name(std::string channel_name);
 	Client *get_client_by_nick(std::string nickname);
+	Client *get_bot();
 };
 
 // Fonction utilitaire externe
