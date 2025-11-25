@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 01:15:29 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 14:33:41 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -396,7 +396,7 @@ void mode(std::string cmd, Client *client, Server* server)
 
 void ping(std::string cmd, Client *client, Server *server)
 {
-	std::vector<std::string> input = ft_split(cmd);
+	std::vector<std::string> input = ft_split(cmd, ' ');
 	std::string arg, msg;
 
 
@@ -409,7 +409,7 @@ void ping(std::string cmd, Client *client, Server *server)
 
 void topic(std::string cmd, Client *client, Server *server)
 {
-	std::vector<std::string> input = ft_split(cmd);
+	std::vector<std::string> input = ft_split(cmd, ' ');
 	Channel *channel;
 	std::string new_topic, update_msg;
 
@@ -442,6 +442,35 @@ void topic(std::string cmd, Client *client, Server *server)
 	channel->set_topic(new_topic);
 	update_msg = client->format_RPL("TOPIC " + channel->getName() + " :" + channel->get_topic());
 	channel->sendMessageToAllClients(update_msg, NULL);
+}
+
+
+//INVITE <nick> <channel>
+void invite(std::string cmd, Client *client, Server* server)
+{
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	Channel *channel;
+	Client *invited_client;
+	std::string invite_msg;
+
+	if(input.size() < 3)
+		return(server->sendRPL(client, 461, "TOPIC :Not enough parameters"));
+	invited_client = server->get_client_by_nick(input[1]);
+	if (!invited_client)
+		return(server->sendRPL(client, 401, input[1] + " :No such nick"));
+	channel = server->get_channel_by_name(input[2]);
+	if (!channel)
+		return(server->sendRPL(client, 403, input[2] + " :No such channel"));
+	if(channel->is_client(client) == false)
+		return(server->sendRPL(client, 442, input[2] + " :You're not on that channel"));
+	if(channel->is_client(invited_client) == true)
+		return(server->sendRPL(client, 443, input[1] + " " + input[2] + " :is already on channel"));
+	if(channel->is_invite_only() && channel->is_op(client) == false)
+		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
+	channel->get_invited_nick().push_back(invited_client->getNickname());
+	invite_msg = client->format_RPL("INVITE " + invited_client->getNickname() + " :" + channel->getName());
+	server->sendMessage(invited_client->getClientFd(), invite_msg);
+	server->sendRPL(client, 341, invited_client->getNickname() + " " + channel->getName());
 }
 
 void make_command(std::string cmd, Client *client, Server* server)
