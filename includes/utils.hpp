@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 23:27:30 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 01:03:09 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,3 +38,4 @@ std::string get_valid_username(std::string user);
 long getTimestamp();
 int ft_sto_ui(std::string str);
 bool is_valid_mode(std::string mode);
+std::string is_valid_topic(std::string topic);

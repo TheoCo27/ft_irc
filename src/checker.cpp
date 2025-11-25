@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/24 23:27:18 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 00:57:39 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ std::string get_valid_realname(std::string rname)
 	if (output[0] == ':')
 		output.erase(0, 1);
 	for(size_t i = 0; output[i]; i++)
-		if(!(std::isprint(static_cast<int>(rname[i]))))
+		if(!(std::isprint(static_cast<int>(rname[i]))) || rname[i] == '\r' || rname[i] == '\n')
 			output[i] = 'o';
 	return output;
 }
@@ -121,6 +121,8 @@ bool check_valid_channel_name(std::string name)
 	{
 		if(std::isspace(static_cast<int>(name[i])) || name[i] == ',' || (!(std::isprint(static_cast<int>(name[i])))))
 			return false;
+		if (name[i] == '\r' || name[i] == '\n')
+        	return false;
 	}
 	return true;
 }
@@ -134,4 +136,21 @@ bool is_valid_mode(std::string mode)
 	if(mode[1] != 'i' || mode[1] != 't' || mode[1] != 'k' || mode[1] != 'l' || mode[1] != 'o')
 		return false;
 	return true;
+}
+
+
+std::string is_valid_topic(std::string topic)
+{
+	std::string output(topic);
+
+	if(output.length() > 307)
+		trunc(topic, 307);
+	for(size_t i = 0; output[i]; i++)
+	{
+		if(!(std::isprint(static_cast<int>(output[i]))))
+			return "";
+		if (output[i] == '\r' || output[i] == '\n')
+        	return "";
+	}
+	return output;
 }

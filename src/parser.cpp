@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/24 23:50:38 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 01:15:29 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -405,6 +405,43 @@ void ping(std::string cmd, Client *client, Server *server)
 	arg = remove_1st_word(cmd);
 	msg = ":server.42irc PONG server :" + arg;
 	server->sendMessage(client->getClientFd(), msg);
+}
+
+void topic(std::string cmd, Client *client, Server *server)
+{
+	std::vector<std::string> input = ft_split(cmd);
+	Channel *channel;
+	std::string new_topic, update_msg;
+
+	if(input.size() < 2)
+		return(server->sendRPL(client, 461, "TOPIC :Not enough parameters"));
+	channel = server->get_channel_by_name(input[1]);
+	if(!channel)
+		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
+	if(!channel->is_client(client))
+		return(server->sendRPL(client, 442, input[1] + " :You're not on that channel"));
+	if(input.size() == 2)
+	{
+		if(channel->get_topic() == "*")
+			server->sendRPL(client, 331, input[1] + " :No topic is set");
+		if(channel->get_topic() != "*")
+			server->sendRPL(client, 332, input[1] + " :" + channel->get_topic());
+		//:server 333 <nick> #chan <who_set_it> <when_set> (lazy but if does not work Il do it)
+		return;
+	}
+	if(input.size() > 2 && channel->is_topic_restricted() && channel->is_op(client) == false)
+		return(server->sendRPL(client, 482, input[1] + " :You're not channel operator"));
+	new_topic = remove_1st_word(cmd);
+	new_topic = remove_1st_word(cmd);
+	new_topic = is_valid_topic(new_topic);
+	if(new_topic == "")
+	{
+		server->sendNotice(client, "TOPIC invalid char detected");
+		return(server->sendRPL(client, 461, "TOPIC :Not enough parameters"));
+	}
+	channel->set_topic(new_topic);
+	update_msg = client->format_RPL("TOPIC " + channel->getName() + " :" + channel->get_topic());
+	channel->sendMessageToAllClients(update_msg, NULL);
 }
 
 void make_command(std::string cmd, Client *client, Server* server)
