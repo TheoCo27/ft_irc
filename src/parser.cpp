@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 15:50:02 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/25 16:40:38 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool is_cmd(std::string str)
             return(true);
         if (startsWith(str, "JOIN") == true)
             return(true);
-        if (startsWith(str, "LEAVE") == true)
+        if (startsWith(str, "PART") == true)
             return(true);
         if (startsWith(str, "PRIVMSG") == true)
             return(true);
@@ -113,20 +113,43 @@ void join(std::string cmd, Client *client, Server *server)
 		send_join_success_rpl(new_channel, client, server);
     }
 }
-
-//channel list upadte keep going from here
-
-void leave(Client *client, std::vector<Channel*>& channels)
+std::string get_part_reason(std::string cmd)
 {
-    if (client->getStatus() & CONNECTED)
-        return;
-    std::string channel_name = client->getChannelName();
+	std::string reason(cmd);
+
+	for(int i = 0; i < 2; i++)
+		reason = remove_1st_word(reason);
+	if(reason.empty())
+		return("");
+	else
+		return (" :" + reason);
+}
+
+void part(Client *client, std::vector<Channel*>& channels, Server *server, std::string cmd)
+{
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	Channel *channel;
+	std::string part_msg;
+
+	if(input.size() < 2)
+		return(server->sendRPL(client, 461, "INVITE :Not enough parameters"));
+	channel = server->get_channel_by_name(input[1]);
+	if (!channel)
+		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
+	if(channel->is_client(client) == false)
+		return(server->sendRPL(client, 442, input[1] + " :You're not on that channel"));
+//last time
+    std::string channel_name = channel->getName();
     int i = get_channel_index(channel_name, channels);
     if (i != -1)
     {
+		part_msg = client->format_RPL("PART " + channel->getName() + get_part_reason(cmd));
+		channel->sendMessageToAllClients(part_msg, NULL);
+		if(channels[i]->is_op(client) == true)
+			channels[i]->remove_op(client);
         channels[i]->removeClient(client);
-        client->setChannelName("");;
-        client->setStatus(client->getStatus() | CONNECTED);
+        //client->setChannelName("");;
+        //client->setStatus(client->getStatus() | CONNECTED);
 		client->remove_channel_fromchannelList(channel_name);
         if (channels[i]->getNbClient() <= 0)
             channels.erase(channels.begin() + i);
@@ -512,8 +535,8 @@ void make_command(std::string cmd, Client *client, Server* server)
 {
 	if (startsWith(cmd, "JOIN"))
 		join(cmd, client, server);
-	if (startsWith(cmd, "LEAVE"))
-		leave(client, server->get_channels());
+	if (startsWith(cmd, "PART"))
+		part(client, server->get_channels(), server, cmd);
 	if (startsWith(cmd, "PASS"))
 		pass(cmd, client, server);
 	if (startsWith(cmd, "NICK"))
