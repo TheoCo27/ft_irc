@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 16:40:38 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/25 18:24:12 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -387,7 +387,7 @@ void mode(std::string cmd, Client *client, Server* server)
 			channel->remove_op(new_op);
 	}
 	std::string msg;
-	int i = 0;
+	size_t i = 0;
 	while(i < input.size())
 	{
 		if(i != 0)
@@ -530,6 +530,33 @@ void kick(std::string cmd, Client *client, Server* server)
 	channel->sendMessageToAllClients(reason, NULL);
 }
 
+std::string get_quit_reason(std::string cmd)
+{
+	std::string reason(cmd);
+
+	reason = remove_1st_word(reason);
+	if(reason.empty())
+		return("");
+	else
+		return (" :" + reason);
+}
+
+void quit(std::string cmd, Client *client, Server* server)
+{
+	std::string quit_msg;
+	std::vector<std::string> channel_list = client->get_channel_list();
+
+	quit_msg = client->format_RPL("QUIT" + get_quit_reason(cmd));
+	for(size_t i = 0; i < channel_list.size(); i++)
+	{
+		Channel *channel = server->get_channel_by_name(channel_list[i]);
+		channel->sendMessageToAllClients(quit_msg, client);
+		if(channel->is_op(client))
+			channel->remove_op(client);
+		channel->removeClient(client);
+	}
+	server->closeClient(client->getClientFd());
+}
 
 void make_command(std::string cmd, Client *client, Server* server)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 00:40:06 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/25 18:09:51 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ class Channel
 		int get_client_index(Client *client);
 		void sendMessage(int client_fd, const std::string& message);
 		std::string receiveMessage(int client_fd);
-		void Channel::remove_op(Client *client);
+		void remove_op(Client *client);
 
 		//getters
 		int getNbClient() const;
@@ -74,5 +74,4 @@ class Channel
 		void set_has_limit_user(bool has_limit_user);
 		void set_invite_only(bool is_invite_only);
 		void set_limit_user(int limit_user);
-
 };
