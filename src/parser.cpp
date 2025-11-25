@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 14:33:41 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/25 15:50:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,10 +184,7 @@ void username(std::string cmd, Client *client, Server *server)
 	std::vector<std::string> parsed_input = ft_split(cmd, ' ');
 
 	if (parsed_input.size() < 5)
-	{
-		server->sendRPL(client, 461, "USER :Not enough parameters");
-		return;
-	}
+		return(server->sendRPL(client, 461, "USER :Not enough parameters"));
 	if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
 	{
 		if (client->getStatus() & CONNECTED)
@@ -201,7 +198,6 @@ void username(std::string cmd, Client *client, Server *server)
 	{
 		username = get_valid_username(username);
 		server->sendNotice(client, "Invalid username has been normalized");
-
 	}
 	std::string mode = parsed_input[2];
 	std::string realname = get_realname(cmd);
@@ -224,23 +220,18 @@ void nickname(std::string cmd, Client *client, Server *server)
 	}
 	std::vector<std::string> tab = ft_split(cmd, ' ');
 	if (tab.size() < 2)
-	{
-		server->sendRPL(client, 431, ":No nickname given");
-		return;
-	}
+		return(server->sendRPL(client, 431, ":No nickname given"));
 	std::string nick = trim_cmd(cmd);
 	if (check_valid_nickname(nick) == false)
 	{
 		std::string rpl = nick + " :Erroneous nickname";
-		server->sendRPL(client, 432, rpl);
-		return;
+		return(server->sendRPL(client, 432, rpl));
 	}
 	std::vector<std::string> nickname_list = server->get_nickname_list();
 	if (is_inside(nickname_list, nick))
 	{
 		std::string rpl = nick + " :Nickname is already in use";
-		server->sendRPL(client, 433, rpl);
-		return;
+		return(server->sendRPL(client, 433, rpl));
 	}
 	if(client->getStatus() & PASSWORD_OK && (!(client->getStatus() & CONNECTED)))
 	{
@@ -454,7 +445,7 @@ void invite(std::string cmd, Client *client, Server* server)
 	std::string invite_msg;
 
 	if(input.size() < 3)
-		return(server->sendRPL(client, 461, "TOPIC :Not enough parameters"));
+		return(server->sendRPL(client, 461, "INVITE :Not enough parameters"));
 	invited_client = server->get_client_by_nick(input[1]);
 	if (!invited_client)
 		return(server->sendRPL(client, 401, input[1] + " :No such nick"));
@@ -472,6 +463,50 @@ void invite(std::string cmd, Client *client, Server* server)
 	server->sendMessage(invited_client->getClientFd(), invite_msg);
 	server->sendRPL(client, 341, invited_client->getNickname() + " " + channel->getName());
 }
+
+std::string get_kick_reason(std::string cmd)
+{
+	std::string reason(cmd);
+
+	for(int i = 0; i < 3; i++)
+		reason = remove_1st_word(reason);
+	if(reason.empty())
+		return("Kicked");
+	else
+		return (reason);
+}
+
+//KICK <channel> <nick> [reason]
+void kick(std::string cmd, Client *client, Server* server)
+{
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	Channel *channel;
+	Client *kicked_client;
+	std::string kicked_msg;
+	std::string reason;
+
+	if(input.size() < 3)
+		return(server->sendRPL(client, 461, "INVITE :Not enough parameters"));
+	kicked_client = server->get_client_by_nick(input[2]);
+	if (!kicked_client)
+		return(server->sendRPL(client, 401, input[2] + " :No such nick"));
+	channel = server->get_channel_by_name(input[1]);
+	if (!channel)
+		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
+	if(channel->is_client(client) == false)
+		return(server->sendRPL(client, 442, input[1] + " :You're not on that channel"));
+	if(channel->is_client(kicked_client) == false)
+		return(server->sendRPL(client, 441, kicked_client->getNickname() + " " + channel->getName() + " :They aren't on that channel"));
+	if (!channel->is_op(client))
+		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
+	if(channel->is_op(kicked_client))
+		channel->remove_op(kicked_client);
+	channel->removeClient(kicked_client);
+	reason = get_kick_reason(cmd);
+	kicked_msg = client->format_RPL("KICK " + channel->getName() + " " + kicked_client->getNickname() + " :" + reason);
+	channel->sendMessageToAllClients(reason, NULL);
+}
+
 
 void make_command(std::string cmd, Client *client, Server* server)
 {
