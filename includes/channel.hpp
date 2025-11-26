@@ -6,13 +6,14 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 18:09:51 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/26 17:41:32 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "client.hpp"
-#include "utils.hpp"
+#include <ctime>
+//#include "utils.hpp"
 
 class Channel
 {
@@ -30,7 +31,7 @@ class Channel
 		bool has_limit_user;
 		bool invite_only;
 		int limit_user;
-		std::time_t creation_time;
+		time_t creation_time;
 
 
 

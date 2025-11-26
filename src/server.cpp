@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 22:33:52 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/26 17:51:41 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/server.hpp"
 #include "../includes/parser.hpp"
+#include "../includes/utils.hpp"
 #include <sys/epoll.h>
 
 #define MAX_EVENTS 1024
@@ -25,6 +26,14 @@
 // };
 
 // Initialisiation du serveur
+
+void Server::init_bot(void)
+{
+	this->bot->setUsername("user_bot");
+	this->bot->setNickname("bot");
+	this->bot->setRealname("from_server.42irc");
+	this->bot->setStatus(this->bot->getStatus() | CONNECTED);
+}
 
 Server::Server(int port, const std::string password) : password(password) {
 	this->port = port;
@@ -53,7 +62,8 @@ Server::Server(int port, const std::string password) : password(password) {
 	}
 
 	std::cout << "🟢 Serveur IRC en écoute sur le port " << this->port << std::endl;
-	init_bot(this->bot);
+	bot = new Client(-1);
+	init_bot();
 }
 
 Server::~Server() {
@@ -63,7 +73,8 @@ Server::~Server() {
 	// 	delete this->clients[i];
 	for(std::map<int, Client*>::iterator it = this->clients_map.begin(); it != this->clients_map.end(); ++it)
 		delete it->second;
-	this->clients_map.clear();	
+	this->clients_map.clear();
+	delete this->bot;
 }
 
 void Server::init() {

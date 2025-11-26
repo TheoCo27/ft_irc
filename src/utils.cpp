@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 22:30:36 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/26 17:48:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/utils.hpp"
+#include "../includes/server.hpp"
 
 bool startsWith(const std::string& input, const std::string& prefix) {
     if (input.size() < prefix.size())
@@ -133,13 +134,13 @@ int ft_sto_ui(std::string str)
 
 }
 
-void init_bot(Client& bot, Server* server)
-{
-	bot.setUsername("user_bot");
-	bot.setNickname("bot");
-	bot.setRealname("from_server.42irc");
-	bot.setStatus(bot.getStatus() | CONNECTED);
-}
+// void init_bot(Client *bot)
+// {
+// 	bot->setUsername("user_bot");
+// 	bot->setNickname("bot");
+// 	bot->setRealname("from_server.42irc");
+// 	bot->setStatus(bot->getStatus() | CONNECTED);
+// }
 
 void make_bot_speak(Client *bot, Server *server, Client *dest)
 {

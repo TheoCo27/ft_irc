@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 22:33:05 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/26 17:48:16 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ public:
 
 	// Initialisation et démarrage
 	void init();
+	void init_bot(void);
 	void start();
 
 	// Connexion / gestion client

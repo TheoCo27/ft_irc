@@ -3,14 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 22:35:52 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/26 17:53:44 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/parser.hpp"
+#include "../includes/utils.hpp"
 
 bool is_cmd(std::string str)
 {
@@ -203,7 +204,6 @@ void connect_client(Client *client, Server *server)
 }
 void username(std::string cmd, Client *client, Server *server)
 {
-	std::cout << "inside user cmd\n";
 	std::vector<std::string> parsed_input = ft_split(cmd, ' ');
 
 	if (parsed_input.size() < 5)
@@ -311,7 +311,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 	}
 	else
 	{
-		if(input[1] == bot)
+		if(input[1] == "bot")
 			return(make_bot_speak(server->get_bot(), server, client));
 
 		Client *dest = server->get_client_by_nick(input[1]);

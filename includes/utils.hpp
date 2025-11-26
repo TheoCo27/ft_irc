@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/25 22:31:19 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/26 17:46:37 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,13 @@
 #include <cctype>
 #include <vector>
 #include <algorithm>
-#include "client.hpp"
-#include "server.hpp"
+// #include "client.hpp"
+// #include "server.hpp"
 #include <sstream>
 #include <ctime>
 
+class Server;
+class Client;
 
 bool startsWith(const std::string& input, const std::string& prefix);
 void decapitalize(std::string &str);
@@ -40,5 +42,5 @@ long getTimestamp();
 int ft_sto_ui(std::string str);
 bool is_valid_mode(std::string mode);
 std::string is_valid_topic(std::string topic);
-void init_bot(Client& bot, Server* server);
+//void init_bot(Client* bot);
 void make_bot_speak(Client *bot, Server *server, Client *dest);

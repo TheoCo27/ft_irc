@@ -6,11 +6,12 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 19:41:34 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/26 17:43:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/channel.hpp"
+#include "../includes/utils.hpp"
 
 Channel::Channel(std::string name)
 {
