@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 18:41:17 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/26 20:03:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,22 @@ Server::~Server() {
 	close(this->epoll_fd);
 	// for (size_t i = 0; i < this->clients.size(); ++i)
 	// 	delete this->clients[i];
-	for(std::map<int, Client*>::iterator it = this->clients_map.begin(); it != this->clients_map.end(); ++it)
-		delete it->second;
+	// for(std::map<int, Client*>::iterator it = this->clients_map.begin(); it != this->clients_map.end(); ++it)
+	// {
+	// 	Client *client = it->second;
+	// 	closeClient(client->getClientFd());
+	// 	it = clients_map.begin();
+	// }
+	while (!clients_map.empty()) 
+		closeClient(clients_map.begin()->first);
+
 	this->clients_map.clear();
+    user_list.clear();
+    nickname_list.clear();
 	delete this->bot;
+	for (size_t i = 0; i < channels.size(); ++i)
+		delete channels[i];
+	channels.clear();
 }
 
 void Server::init() {
@@ -214,15 +226,15 @@ void Server::closeClient(int client_fd) {
 }
 
 void Server::removeClient(int client_fd) {
-	// Client* client = NULL;
+	Client* client = NULL;
 
-	// if (clients_map.count(client_fd))
-	// 	client = clients_map[client_fd];
+	if (clients_map.count(client_fd))
+		client = clients_map[client_fd];
 
-	// if (!client)
-	// 	return; // évite le crash
+	if (!client)
+		return; // évite le crash
 
-	Client *client = clients_map[client_fd];
+	client = clients_map[client_fd];
 	remove_from_vec(this->user_list, client->getUsername());
 	remove_from_vec(this->nickname_list, client->getNickname());
 	this->clients_map.erase(client_fd);

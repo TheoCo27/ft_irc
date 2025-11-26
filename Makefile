@@ -54,10 +54,19 @@ fclean: clean
 # Recompilation complète
 re: fclean all
 
-run:
+client:
 	bash ./run.sh
 
-s:
+run:
 	./ircserv 6667 theo
 
-.PHONY: all clean fclean re run s
+test:
+	valgrind \
+    --leak-check=full \
+    --show-leak-kinds=all \
+    --track-fds=yes \
+    ./ircserv 6667 theo
+
+
+
+.PHONY: all clean fclean re client run test
