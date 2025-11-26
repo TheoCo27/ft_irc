@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 20:03:47 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/26 20:46:55 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,6 +336,7 @@ void Server::removeChannel(std::string name) {
 	int index = get_channel_index(name);
 	if (index == -1)
 		return;
+	delete channels[index]; 
 	channels.erase(channels.begin() + index);
 }
 
