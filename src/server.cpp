@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 17:51:41 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/26 18:41:17 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,17 @@ void Server::acceptClient() {
 	//sendMessage(client_fd, "Please type server password!\n");
 }
 
+bool is_msg_finished(std::string msg)
+{
+	if(msg.length() < 3)
+		return false;
+	size_t last_index = msg.length() - 1;
+	if (msg[last_index] != '\n' && msg[last_index - 1] != '\r')
+		return false;
+	return true;
+}
+
+
 void Server::handleClient(int client_fd) {
 	char buffer[BUFFER_SIZE];
 	//Client *client = get_client_by_fd(this->clients, client_fd);
@@ -150,23 +161,50 @@ void Server::handleClient(int client_fd) {
 		return;
 	}
 	buffer[bytes] = '\0';
-	if (buffer[bytes - 1] != '\n' && buffer[bytes - 2] != '\r')
-	{		std::string old_buf = client->getold_buf();
-		if (old_buf.empty())
-			old_buf = buffer;
-		else
-			old_buf += buffer;
-		client->setOld_buf(old_buf);
+	std::string old_buf = client->getold_buf();
+	if (old_buf.empty())
+		old_buf = buffer;
+	else
+		old_buf += buffer;
+	client->setOld_buf(old_buf);
+	if(is_msg_finished(old_buf) == false)
 		return;
-	}
-	
 	std::string full_msg = client->getold_buf();
-	full_msg += buffer;
+	//full_msg += buffer;
 	client->setOld_buf("");
-	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
-	full_msg = trim(std::string(buffer));
+	std::cout << "📩 Reçu du client " << client_fd << " : " << full_msg;
+	full_msg = trim(std::string(full_msg));
 	inputs_manager(full_msg, client_fd);
 }
+
+// void Server::handleClient(int client_fd) {
+// 	char buffer[BUFFER_SIZE];
+// 	//Client *client = get_client_by_fd(this->clients, client_fd);
+// 	Client *client = this->clients_map[client_fd];
+// 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
+// 	if (bytes <= 0) {
+// 		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
+// 		closeClient(client_fd);
+// 		return;
+// 	}
+// 	buffer[bytes] = '\0';
+// 	if (buffer[bytes - 1] != '\n' && buffer[bytes - 2] != '\r')
+// 	{		std::string old_buf = client->getold_buf();
+// 		if (old_buf.empty())
+// 			old_buf = buffer;
+// 		else
+// 			old_buf += buffer;
+// 		client->setOld_buf(old_buf);
+// 		return;
+// 	}
+	
+// 	std::string full_msg = client->getold_buf();
+// 	full_msg += buffer;
+// 	client->setOld_buf("");
+// 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
+// 	full_msg = trim(std::string(buffer));
+// 	inputs_manager(full_msg, client_fd);
+// }
 
 
 void Server::closeClient(int client_fd) {
