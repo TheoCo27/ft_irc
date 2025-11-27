@@ -72,6 +72,7 @@
 		"ranges": "cpp",
 		"span": "cpp",
 		"map": "cpp",
-		"__tree": "cpp"
+		"__tree": "cpp",
+		"csignal": "cpp"
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checker.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/27 02:57:24 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/27 18:04:54 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,11 +92,11 @@ std::string get_valid_username(std::string user)
 {
 	std::string output(user);
 
-	if(user.length() > 10)
-		output = trunc(user, 10);
 	for(size_t i = 0; output[i]; i++)
 		if(is_valid_char_for_username(output[i]) == false)
 			output[i] = 'o';
+	if(user.length() > 10)
+		output = trunc(user, 10);
 	return output;
 }
 

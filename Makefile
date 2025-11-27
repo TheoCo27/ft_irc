@@ -55,7 +55,7 @@ fclean: clean
 re: fclean all
 
 client:
-	bash ./run.sh
+	bash ./client.sh
 
 run:
 	./ircserv 6667 theo

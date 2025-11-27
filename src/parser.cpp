@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/27 02:58:05 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/27 19:26:37 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ void join(std::string cmd, Client *client, Server *server)
 		return(server->sendRPL(client, 461, "JOIN :Not enough parameters"));
 	if (!input[1].empty() && input[1] == "0")
 	{
-		//part from all channels
+		for(size_t i = 0; i < channel_list.size(); i++)
+			part(client, server->get_channels(), server, "PART " + channel_list[i]);
 		return;
 	}
 	if (check_valid_channel_name(input[1]) == false)
@@ -133,7 +134,7 @@ void part(Client *client, std::vector<Channel*>& channels, Server *server, std::
 	std::string part_msg;
 
 	if(input.size() < 2)
-		return(server->sendRPL(client, 461, "INVITE :Not enough parameters"));
+		return(server->sendRPL(client, 461, "PART :Not enough parameters"));
 	channel = server->get_channel_by_name(input[1]);
 	if (!channel)
 		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
@@ -186,7 +187,7 @@ void pass(std::string cmd, Client *client, Server* server)
 std::string get_realname(std::string cmd)
 {	
 	std::string realname(cmd);
-	for(int i = 0; i < 4; i++)
+	while(realname[0] != '\0' || realname[0] != ':')
 		realname = remove_1st_word(realname);
 	return realname;
 }
@@ -291,7 +292,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 		return(server->sendRPL(client, 411, ":No recipient given (PRIVMSG)"));
 	if(input.size() < 3)
 		return(server->sendRPL(client, 412, ":No text to send"));
-	msg = client->format_RPL("PRIVMSG" + " " + input[1] + " :" + msg);
+	msg = client->format_RPL("PRIVMSG "  + input[1] + " :" + msg);
 	msg = get_valid_privmsg(msg);
 	if (input[1][0] == '#' || input[1][0] == '&')
 	{
