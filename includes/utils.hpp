@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/25 16:15:22 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 17:46:37 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/27 02:57:36 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,3 +44,4 @@ bool is_valid_mode(std::string mode);
 std::string is_valid_topic(std::string topic);
 //void init_bot(Client* bot);
 void make_bot_speak(Client *bot, Server *server, Client *dest);
+std::string get_valid_privmsg(std::string input);

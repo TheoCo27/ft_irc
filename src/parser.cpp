@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/26 17:53:44 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/27 02:58:05 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,35 +279,28 @@ void nickname(std::string cmd, Client *client, Server *server)
 		server->sendMessage(client->getClientFd(), msg);
 	}
 }
-
+//PRIVMSG <target> :message
 void privmsg(std::string cmd, Client *client, Server *server)
 {
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	std::string reply;
 	std::string msg = remove_1st_word(cmd);
 	msg = remove_1st_word(msg);
-	msg += "\n";
 
-	if (input.size() < 3)
-	{
-		reply = format_client_reply(client, 411, ":No recipient or text provided");
-		server->sendMessage(client->getClientFd(), reply);
-		return;
-	}
-	if (input[1][0] == '#')
+	if (input.size() < 2)
+		return(server->sendRPL(client, 411, ":No recipient given (PRIVMSG)"));
+	if(input.size() < 3)
+		return(server->sendRPL(client, 412, ":No text to send"));
+	msg = client->format_RPL("PRIVMSG" + " " + input[1] + " :" + msg);
+	msg = get_valid_privmsg(msg);
+	if (input[1][0] == '#' || input[1][0] == '&')
 	{
 		Channel *channel = server->get_channel_by_name(input[1]);
 		if (!channel)
-		{
-			std::cout << "Channel does not exist" << std::endl;
-			return;
-		}
+			return(server->sendRPL(client, 403, input[1] + " :No such channel"));
 		if (!(is_inside(client->get_channel_list(), input[1])))
-		{
-			std::cout << "Client is not part of channel " << input[1] << std::endl;
-			return;
-		}
-		channel->sendMessageToAllClients(msg, client);
+			return(server->sendRPL(client, 404, input[1] + "  :Cannot send to channel"));
+		channel->sendMessageToAllClients(msg, NULL);
 	}
 	else
 	{
@@ -316,8 +309,8 @@ void privmsg(std::string cmd, Client *client, Server *server)
 
 		Client *dest = server->get_client_by_nick(input[1]);
 		if (!dest)
-			return;
-		client->sendMessage(dest->getClientFd(), msg);
+			return(server->sendRPL(client, 401, input[1] + " :No such nick"));
+		server->sendMessage(dest->getClientFd(), msg);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/25 22:21:37 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/27 02:57:24 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ bool check_valid_nickname(std::string nick)
 		return false;
 	if(nick == "bot")
 		return false;
+	if(nick[0] == '#' || nick[0] == '&')
 	if (std::isalpha(static_cast<int>(nick[0])) == false)
 		return false;
 	for(size_t i = 0; nick[i]; i++)
@@ -155,4 +156,12 @@ std::string is_valid_topic(std::string topic)
         	return "";
 	}
 	return output;
+}
+
+std::string get_valid_privmsg(std::string input)
+{
+	std::string msg(input);
+	if(msg.length() > 512)
+		trunc(msg, 512);
+	return msg;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
+/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 20:46:55 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/27 02:40:21 by theog            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 
 void Server::init_bot(void)
 {
-	this->bot->setUsername("user_bot");
+	this->bot->setUsername("stupid_bot");
 	this->bot->setNickname("bot");
 	this->bot->setRealname("from_server.42irc");
 	this->bot->setStatus(this->bot->getStatus() | CONNECTED);
