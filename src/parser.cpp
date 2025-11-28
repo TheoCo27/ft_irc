@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/28 13:46:34 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/28 18:38:35 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,18 @@ bool is_cmd(std::string str)
         if (startsWith(str, "PART") == true)
             return(true);
         if (startsWith(str, "PRIVMSG") == true)
+            return(true);
+        if (startsWith(str, "QUIT") == true)
+            return(true);
+        if (startsWith(str, "TOPIC") == true)
+            return(true);
+        if (startsWith(str, "MODE") == true)
+            return(true);
+        if (startsWith(str, "PING") == true)
+            return(true);
+        if (startsWith(str, "INVITE") == true)
+            return(true);
+        if (startsWith(str, "KICK") == true)
             return(true);
     }
     return(false);
@@ -267,8 +279,8 @@ void nickname(std::string cmd, Client *client, Server *server)
 	else if(client->getStatus() & CONNECTED || client->getStatus() & IN_CHANNEL)
 	{
 		std::vector<std::string> channel_list = client->get_channel_list();
-		std::string msg = " NICK:" + nick + "\r\n";
-		msg = client->format_RPL(nick);
+		std::string msg = " NICK: " + nick;
+		msg = client->format_RPL(msg);
 		for(size_t i = 0; i < channel_list.size(); i++)
 		{
 			Channel* channel = server->get_channel_by_name(channel_list[i]);
@@ -434,7 +446,7 @@ void topic(std::string cmd, Client *client, Server *server)
 		return(server->sendRPL(client, 442, input[1] + " :You're not on that channel"));
 	if(input.size() == 2)
 	{
-		if(channel->get_topic() == "*")
+		if(channel->get_topic() == "No topic set")
 			server->sendRPL(client, 331, input[1] + " :No topic is set");
 		if(channel->get_topic() != "*")
 			server->sendRPL(client, 332, input[1] + " :" + channel->get_topic());
@@ -570,6 +582,18 @@ void make_command(std::string cmd, Client *client, Server* server)
 		username(cmd, client, server);
 	if (startsWith(cmd, "PRIVMSG"))
 		privmsg(cmd, client, server);
+	if (startsWith(cmd, "PING"))
+		ping(cmd, client, server);
+	if (startsWith(cmd, "QUIT"))
+		quit(cmd, client, server);
+	if (startsWith(cmd, "TOPIC"))
+		topic(cmd, client, server);
+	if (startsWith(cmd, "INVITE"))
+		invite(cmd, client, server);
+	if (startsWith(cmd, "KICK"))
+		kick(cmd, client, server);
+	if (startsWith(cmd, "MODE"))
+		mode(cmd, client, server);
 }
 
 	// if (client->getStatus() == WAITING_PASSWORD) {

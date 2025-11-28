@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/27 18:04:54 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/28 18:30:28 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ bool check_valid_nickname(std::string nick)
 		return false;
 	if(nick == "bot")
 		return false;
-	if(nick[0] == '#' || nick[0] == '&')
 	if (std::isalpha(static_cast<int>(nick[0])) == false)
 		return false;
 	for(size_t i = 0; nick[i]; i++)

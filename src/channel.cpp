@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 17:43:02 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/28 19:06:42 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 Channel::Channel(std::string name)
 {
     this->name = name;
-    topic = "*";
+    topic = "No topic set";
 	nb_client = 0;
     topic_restricted = 0;
     has_password = 0;
@@ -76,7 +76,7 @@ void Channel::removeClient(Client* client)
 
 void Channel::sendMessageToAllClients(const std::string& message, Client *client)
 {
-    std::string from;
+    std::string from(message);
     // if (client != NULL)
     // {
     //     from = "From ";

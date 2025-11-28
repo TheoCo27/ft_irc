@@ -80,7 +80,9 @@ pass_test:
 	bash $(TEST_DIR)/pass_test.sh
 
 nickname_test:
-	bash $(TEST_DIR)/nickname_test.sh
+	@gnome-terminal -- bash -c "cd $(CURDIR); ./test/nickname_test.sh; exec bash" & \
+	bash $(TEST_DIR)/c_for_nick.sh
+
 
 user_test:
 	bash $(TEST_DIR)/user_test.sh

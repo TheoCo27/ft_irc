@@ -19,7 +19,7 @@ PORT="6667"
 	sleep 0.2
     echo "NICK &nick"
 	sleep 0.2
-    echo "NICK 67nick" #ici bug le nick est valide
+    echo "NICK 67nick"
 	sleep 0.2
     echo "NICK @nick"
 	sleep 0.2
@@ -31,5 +31,5 @@ PORT="6667"
 	sleep 0.2
 	echo "JOIN #chips"
 	sleep 0.2
-    echo "NICK new_nick"
+    echo "NICK new-nick"
 } | nc -C $HOST $PORT
