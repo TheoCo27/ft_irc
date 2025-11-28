@@ -19,7 +19,7 @@ PORT="6667"
 	sleep 0.2
     echo "NICK &nick"
 	sleep 0.2
-    echo "NICK 67nick"
+    echo "NICK 67nick" #ici bug le nick est valide
 	sleep 0.2
     echo "NICK @nick"
 	sleep 0.2

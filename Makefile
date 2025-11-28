@@ -17,6 +17,7 @@ CXXFLAGS    := -Wall -Wextra -Werror -std=c++98 -Iincludes -g3
 
 SRC_DIR     := src
 OBJ_DIR     := obj
+TEST_DIR    = test
 
 SRC_FILES   := main.cpp server.cpp client.cpp channel.cpp parser.cpp utils.cpp checker.cpp
 #server.cpp client.cpp channel.cpp
@@ -54,12 +55,6 @@ fclean: clean
 # Recompilation complète
 re: fclean all
 
-client:
-	bash ./client.sh
-
-co:
-	bash ./connect.sh
-
 run:
 	./ircserv 6667 theo
 
@@ -70,6 +65,32 @@ test:
     --track-fds=yes \
     ./ircserv 6667 theo
 
+# **************************************************************************** #
+#                               TEST COMMANDS                                  #
+# **************************************************************************** #
+
+co:          ; bash $(TEST_DIR)/connect.sh
+client:           ; bash $(TEST_DIR)/client.sh
+pass_test:        ; bash $(TEST_DIR)/pass_test.sh
+nickname_test:    ; bash $(TEST_DIR)/nickname_test.sh
+user_test:        ; bash $(TEST_DIR)/user_test.sh
+join_test:        ; bash $(TEST_DIR)/join_test.sh
+part_test:        ; bash $(TEST_DIR)/part_test.sh
+invite_test:      ; bash $(TEST_DIR)/invite_test.sh
+kick_test:        ; bash $(TEST_DIR)/kick_test.sh
+topic_test:       ; bash $(TEST_DIR)/topic_test.sh
+privmsg_test:     ; bash $(TEST_DIR)/privmsg_test.sh
+ping:             ; bash $(TEST_DIR)/ping.sh
+mode:             ; bash $(TEST_DIR)/mode.sh
+quit:             ; bash $(TEST_DIR)/quit.sh
+
+# **************************************************************************** #
+#                                   PHONY                                      #
+# **************************************************************************** #
+
+.PHONY: all clean fclean re run \
+	co client pass_test nickname_test user_test \
+	join_test part_test invite_test kick_test topic_test \
+	privmsg_test ping mode qui
 
 
-.PHONY: all clean fclean re client run test
