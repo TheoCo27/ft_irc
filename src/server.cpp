@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: theog <theog@student.42.fr>                +#+  +:+       +#+        */
+/*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/27 02:40:21 by theog            ###   ########.fr       */
+/*   Updated: 2025/11/28 17:15:23 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,6 @@ void Server::handleClient(int client_fd) {
 	Client *client = this->clients_map[client_fd];
 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytes <= 0) {
-		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
 		closeClient(client_fd);
 		return;
 	}
@@ -220,6 +219,7 @@ void Server::handleClient(int client_fd) {
 
 
 void Server::closeClient(int client_fd) {
+	std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
 	epoll_ctl(this->epoll_fd, EPOLL_CTL_DEL, client_fd, NULL);
 	close(client_fd);
 	removeClient(client_fd);

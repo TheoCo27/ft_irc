@@ -69,28 +69,55 @@ test:
 #                               TEST COMMANDS                                  #
 # **************************************************************************** #
 
-co:          ; bash $(TEST_DIR)/connect.sh
-client:           ; bash $(TEST_DIR)/client.sh
-pass_test:        ; bash $(TEST_DIR)/pass_test.sh
-nickname_test:    ; bash $(TEST_DIR)/nickname_test.sh
-user_test:        ; bash $(TEST_DIR)/user_test.sh
-join_test:        ; bash $(TEST_DIR)/join_test.sh
-part_test:        ; bash $(TEST_DIR)/part_test.sh
-invite_test:      ; bash $(TEST_DIR)/invite_test.sh
-kick_test:        ; bash $(TEST_DIR)/kick_test.sh
-topic_test:       ; bash $(TEST_DIR)/topic_test.sh
-privmsg_test:     ; bash $(TEST_DIR)/privmsg_test.sh
-ping:             ; bash $(TEST_DIR)/ping.sh
-mode:             ; bash $(TEST_DIR)/mode.sh
-quit:             ; bash $(TEST_DIR)/quit.sh
+co:
+	bash $(TEST_DIR)/connect.sh
 
+client:
+	bash $(TEST_DIR)/client.sh
+
+pass_test:
+	bash $(TEST_DIR)/wrong_pass_test.sh
+	bash $(TEST_DIR)/pass_test.sh
+
+nickname_test:
+	bash $(TEST_DIR)/nickname_test.sh
+
+user_test:
+	bash $(TEST_DIR)/user_test.sh
+
+join_test:
+	bash $(TEST_DIR)/join_test.sh
+
+part_test:
+	bash $(TEST_DIR)/part_test.sh
+
+invite_test:
+	bash $(TEST_DIR)/invite_test.sh
+
+kick_test:
+	bash $(TEST_DIR)/kick_test.sh
+
+topic_test:
+	bash $(TEST_DIR)/topic_test.sh
+
+privmsg_test:
+	bash $(TEST_DIR)/privmsg_test.sh
+
+ping:
+	bash $(TEST_DIR)/ping.sh
+
+mode:
+	bash $(TEST_DIR)/mode.sh
+
+quit:
+	bash $(TEST_DIR)/quit.sh
 # **************************************************************************** #
 #                                   PHONY                                      #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re run \
+.PHONY: all clean fclean re run test \
 	co client pass_test nickname_test user_test \
 	join_test part_test invite_test kick_test topic_test \
-	privmsg_test ping mode qui
+	privmsg_test ping mode quit
 
 
