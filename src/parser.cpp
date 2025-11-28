@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/27 19:26:37 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/28 13:46:34 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void pass(std::string cmd, Client *client, Server* server)
 std::string get_realname(std::string cmd)
 {	
 	std::string realname(cmd);
-	while(realname[0] != '\0' || realname[0] != ':')
+	while(realname[0] != '\0' && realname[0] != ':')
 		realname = remove_1st_word(realname);
 	return realname;
 }

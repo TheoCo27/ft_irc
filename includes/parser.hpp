@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:19:26 by theog             #+#    #+#             */
-/*   Updated: 2025/11/26 17:37:11 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/28 13:45:59 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,3 +19,4 @@ class Server;
 
 bool is_cmd(std::string str);
 void make_command(std::string cmd, Client *client, Server* server);
+void part(Client *client, std::vector<Channel*>& channels, Server *server, std::string cmd);
