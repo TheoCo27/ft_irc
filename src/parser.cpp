@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/28 18:38:35 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 16:33:47 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,6 @@ void username(std::string cmd, Client *client, Server *server)
 		return(server->sendRPL(client, 461, "USER :Not enough parameters"));
 	if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
 	{
-		if (client->getStatus() & CONNECTED)
 		server->sendRPL(client, 462, "You may not reregister");
 		if (!(client->getStatus() & CONNECTED))
 			server->sendNotice(client, "Use PASS command first");

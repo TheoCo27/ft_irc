@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/28 18:30:28 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 16:51:32 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ bool check_valid_nickname(std::string nick)
 
 static bool is_valid_char_for_username(char c)
 {
-	char set[] = ". _ - ~";
+	char set[] = "._-~";
 	
 	if (!(std::isprint(static_cast<int>(c))))
 		return false;
@@ -87,16 +87,33 @@ std::string trunc(const std::string& str, size_t len_to_trunc)
     return str.substr(0, len_to_trunc);
 }
 
+// std::string get_valid_username(std::string user)
+// {
+// 	std::string output(user);
+
+// 	for(size_t i = 0; output[i]; i++)
+// 		if(is_valid_char_for_username(output[i]) == false)
+// 			output[i] = 'o';
+// 	if(user.length() > 10)
+// 		output = trunc(user, 10);
+// 	return output;
+// }
+
 std::string get_valid_username(std::string user)
 {
-	std::string output(user);
+    std::string output;
 
-	for(size_t i = 0; output[i]; i++)
-		if(is_valid_char_for_username(output[i]) == false)
-			output[i] = 'o';
-	if(user.length() > 10)
-		output = trunc(user, 10);
-	return output;
+    std::string tmp = user;
+    if (tmp.size() > 10)
+        tmp = tmp.substr(0, 10);
+
+    for (size_t i = 0; i < tmp.size(); i++)
+    {
+        if (is_valid_char_for_username(tmp[i]))
+            output += tmp[i];
+    }
+
+    return output;
 }
 
 std::string get_valid_realname(std::string rname)
@@ -108,7 +125,7 @@ std::string get_valid_realname(std::string rname)
 	if (output[0] == ':')
 		output.erase(0, 1);
 	for(size_t i = 0; output[i]; i++)
-		if(!(std::isprint(static_cast<int>(rname[i]))) || rname[i] == '\r' || rname[i] == '\n')
+		if(!(std::isprint(static_cast<int>(rname[i]))) || output[i] == '\r' || output[i] == '\n')
 			output[i] = 'o';
 	return output;
 }
