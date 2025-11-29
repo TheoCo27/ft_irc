@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 21:07:51 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 22:35:14 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void send_join_success_rpl(Channel *channel, Client *client, Server *server)
 {
 	//prevenir les users
 	std::string msg;
-	msg = client->format_RPL(" JOIN " + channel->getName());
+	msg = client->format_RPL("JOIN " + channel->getName());
 	channel->sendMessageToAllClients(msg, NULL);
 	server->sendRPL(client, 332, channel->getName() + " :" + channel->get_topic());
 	server->sendRPL(client, 353, "= " + channel->getName() + " :" + channel->get_client_list());
@@ -116,11 +116,10 @@ void join(std::string cmd, Client *client, Server *server)
     else
     {
         Channel *new_channel = new Channel(input[1]);
-		std::vector<Client *>& new_channel_op_lst = new_channel->get_operators();
         channels.push_back(new_channel); // ajoute le channel a la liste server
         new_channel->addClient(client); // ajoute le client a la liste du channel
 		channel_list.push_back(input[1]); // ajoute le channel a la liste du client
-		new_channel_op_lst.push_back(client); // ajoute le client a la liste des op du channel
+		new_channel->add_op(client); // ajoute le client a la liste des op du channel
         //client->setChannelName(new_channel->getName());
         //client->setStatus(IN_CHANNEL);
         std::cout << "Channel " << input[1] << " created\n";
@@ -397,7 +396,7 @@ void mode(std::string cmd, Client *client, Server* server)
 	{
 		Client *new_op = server->get_client_by_nick(input[3]);
 		if(input[2] == "+o")
-			channel->get_operators().push_back(new_op);
+			channel->add_op(new_op);
 		if(input[2] == "-o")
 			channel->remove_op(new_op);
 	}

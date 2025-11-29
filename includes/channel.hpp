@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 20:31:35 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 22:04:45 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,5 @@ class Channel
 		void set_has_limit_user(bool has_limit_user);
 		void set_invite_only(bool is_invite_only);
 		void set_limit_user(int limit_user);
+		void add_op(Client *client);
 };

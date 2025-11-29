@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 20:13:46 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 22:06:31 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,3 +225,9 @@ void Channel::set_has_password(bool has_pass){this->has_password = has_pass;}
 void Channel::set_has_limit_user(bool has_limit_user){this->has_limit_user = has_limit_user;}
 void Channel::set_invite_only(bool is_invite_only){this->invite_only = is_invite_only;}
 void Channel::set_limit_user(int limit_user){this->limit_user = limit_user;}
+void Channel::add_op(Client* client){
+
+	if(is_op(client))
+		return;
+	operators.push_back(client);
+}
