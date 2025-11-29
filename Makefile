@@ -88,7 +88,8 @@ user_test:
 	bash $(TEST_DIR)/user_test.sh
 
 join_test:
-	bash $(TEST_DIR)/join_test.sh
+	@gnome-terminal -- bash -c "cd $(CURDIR); ./test/j_light_test.sh; exec bash" & \
+	bash $(TEST_DIR)/c_for_join.sh
 
 part_test:
 	bash $(TEST_DIR)/part_test.sh

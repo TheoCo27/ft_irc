@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 16:51:32 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 17:05:44 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,9 +150,9 @@ bool is_valid_mode(std::string mode)
 {
 	if(mode.length() != 2)
 		return false;
-	if(mode[0] != '+' || mode[0] != '-')
+	if(mode[0] != '+' && mode[0] != '-')
 		return false;
-	if(mode[1] != 'i' || mode[1] != 't' || mode[1] != 'k' || mode[1] != 'l' || mode[1] != 'o')
+	if(mode[1] != 'i' && mode[1] != 't' && mode[1] != 'k' && mode[1] != 'l' && mode[1] != 'o')
 		return false;
 	return true;
 }
