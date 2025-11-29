@@ -112,6 +112,8 @@ ping:
 	bash $(TEST_DIR)/ping.sh
 
 mode:
+	@gnome-terminal -- bash -c "cd $(CURDIR); bash test/c_for_mode.sh; exec bash"
+	sleep 2
 	bash $(TEST_DIR)/mode.sh
 
 quit:

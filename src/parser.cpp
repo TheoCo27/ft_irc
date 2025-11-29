@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 20:16:49 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 21:07:51 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,10 +349,10 @@ void mode(std::string cmd, Client *client, Server* server)
 	std::string password;
 	if (!channel)
 		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
-	if (!channel->is_op(client))
-		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
 	if (!channel->is_client(client))
 		return(server->sendRPL(client, 442, channel->getName() + " :You're not on that channel"));
+	if (!channel->is_op(client))
+		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
 	//basic check up there, special case down there
 	if (input.size() == 2)
 	{

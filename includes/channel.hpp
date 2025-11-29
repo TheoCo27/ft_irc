@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 20:08:42 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 20:31:35 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ class Channel
 		std::string password;
 		std::string topic;
 		std::vector<Client *> operators;
-		std::vector<Client*> voiced;
 		std::vector<std::string> invited_nick;
 		bool topic_restricted;
 		bool has_password;
