@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 22:35:14 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 22:46:15 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -431,7 +431,7 @@ void ping(std::string cmd, Client *client, Server *server)
 	if(input.size() < 2)
 		return(server->sendRPL(client, 409, ":No origin specified"));
 	arg = remove_1st_word(cmd);
-	msg = ":server.42irc PONG server :" + arg;
+	msg = ":server.42irc PONG server :" + arg + "\n\r";
 	server->sendMessage(client->getClientFd(), msg);
 }
 
