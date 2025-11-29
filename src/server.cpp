@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/28 17:15:23 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 19:59:32 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,6 @@ Server::Server(int port, const std::string password) : password(password) {
 Server::~Server() {
 	close(this->server_fd);
 	close(this->epoll_fd);
-	// for (size_t i = 0; i < this->clients.size(); ++i)
-	// 	delete this->clients[i];
-	// for(std::map<int, Client*>::iterator it = this->clients_map.begin(); it != this->clients_map.end(); ++it)
-	// {
-	// 	Client *client = it->second;
-	// 	closeClient(client->getClientFd());
-	// 	it = clients_map.begin();
-	// }
 	while (!clients_map.empty()) 
 		closeClient(clients_map.begin()->first);
 
@@ -84,7 +76,7 @@ Server::~Server() {
     user_list.clear();
     nickname_list.clear();
 	delete this->bot;
-	for (size_t i = 0; i < channels.size(); ++i)
+	for (int i = channels.size() - 1; i >= 0; --i)
 		delete channels[i];
 	channels.clear();
 }
@@ -230,10 +222,12 @@ void Server::removeClient(int client_fd) {
 
 	if (clients_map.count(client_fd))
 		client = clients_map[client_fd];
-
 	if (!client)
-		return; // évite le crash
-
+		return;
+    for (size_t i = 0; i < channels.size(); ++i) {
+        channels[i]->removeClient(client);
+        channels[i]->remove_op(client);
+    }
 	client = clients_map[client_fd];
 	remove_from_vec(this->user_list, client->getUsername());
 	remove_from_vec(this->nickname_list, client->getNickname());

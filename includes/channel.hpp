@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 17:41:32 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 20:08:42 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ class Channel
 		std::string get_pass();
 		std::string get_topic();
 		std::vector<Client *>& get_operators();
-		std::vector<Client *>& get_voiced();
 		std::vector<std::string>& get_invited_nick();
 		bool is_topic_restricted();
 		bool check_has_password();
@@ -62,7 +61,6 @@ class Channel
 		std::time_t get_creation_time();
 		std::string get_client_list();
 		bool is_op(Client *client);
-		bool is_voiced(Client *client);
 		bool is_client(Client *client);
 		std::string get_mode_list();
 		//setters

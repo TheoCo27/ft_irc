@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 17:08:36 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 19:47:10 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,9 @@ Client::Client(int client_fd)
 	this->channel_name = "";
 	this->old_buf = "";
 }
-Client::~Client(){}
+Client::~Client(){
+	channel_list.clear();
+}
 
 
 void Client::sendMessage(int client_fd, const std::string& message)

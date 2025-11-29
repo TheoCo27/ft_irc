@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/28 19:06:42 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 20:13:46 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ Channel::Channel(std::string name)
 
 Channel::~Channel()
 {
+	clients.clear();     // ne delete pas les clients, juste enlève les pointeurs
+    operators.clear();
 }
 
 
@@ -109,7 +111,7 @@ std::string Channel::receiveMessage(int client_fd)
 	return std::string(buffer);
 }
 
-
+		std::vector<Client*> voiced;
 bool Channel::is_op(Client *client)
 {
     for (std::vector<Client*>::iterator it = operators.begin(); it != operators.end(); ++it)
@@ -121,15 +123,15 @@ bool Channel::is_op(Client *client)
 }
 
 
-bool Channel::is_voiced(Client *client)
-{
-    for (std::vector<Client*>::iterator it = voiced.begin(); it != voiced.end(); ++it)
-    {
-        if (*it == client)
-            return true;
-    }
-    return false;
-}
+// bool Channel::is_voiced(Client *client)
+// {
+//     for (std::vector<Client*>::iterator it = voiced.begin(); it != voiced.end(); ++it)
+//     {
+//         if (*it == client)
+//             return true;
+//     }
+//     return false;
+// }
 
 bool Channel::is_client(Client *client)
 {
@@ -153,8 +155,6 @@ std::string Channel::get_client_list()
         Client* client = *it;
         if(is_op(client) == true)
             list += "@";
-        if(is_voiced(client) == true)
-            list += "+";
         list += client->getNickname();
     }
 	std::cout << "client list for channel " << this->name << " is : " << list << std::endl;
@@ -206,7 +206,6 @@ int Channel::getNbClient() const{return (nb_client);}
 std::string Channel::get_pass(){ return(password);}
 std::string Channel::get_topic(){return(topic);}
 std::vector<Client *>& Channel::get_operators(){return(operators);}
-std::vector<Client *>& Channel::get_voiced(){return(voiced);}
 std::vector<std::string>& Channel::get_invited_nick(){return(invited_nick);}
 bool Channel::is_topic_restricted(){return(topic_restricted);}
 bool Channel::check_has_password(){return(has_password);}

@@ -10,7 +10,7 @@ PORT="6667"
     echo "NICK tester"
     sleep 0.2
     echo "USER user_theo 0 * :realname_theo"
-    sleep 0.2
+    sleep 5
     echo "JOIN"
     sleep 0.2
     echo "JOIN #chan1"

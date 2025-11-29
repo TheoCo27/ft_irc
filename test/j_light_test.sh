@@ -10,4 +10,5 @@ PORT="6667"
     echo "NICK tester"
     sleep 0.2
     echo "USER user_theo 0 * :realname_theo"
+	sleep 15
 } | nc -C $HOST $PORT

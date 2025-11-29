@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 16:33:47 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/29 20:16:49 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void join(std::string cmd, Client *client, Server *server)
 		return(server->sendRPL(client, 461, "JOIN :Not enough parameters"));
 	if (!input[1].empty() && input[1] == "0")
 	{
-		for(size_t i = 0; i < channel_list.size(); i++)
+		for(int i = channel_list.size() - 1; i >= 0; --i)
 			part(client, server->get_channels(), server, "PART " + channel_list[i]);
 		return;
 	}
@@ -157,7 +157,7 @@ void part(Client *client, std::vector<Channel*>& channels, Server *server, std::
     int i = get_channel_index(channel_name, channels);
     if (i != -1)
     {
-		part_msg = client->format_RPL("PART " + channel->getName() + get_part_reason(cmd));
+		part_msg = client->format_RPL("PART " + channel->getName() + " "+ get_part_reason(cmd));
 		channel->sendMessageToAllClients(part_msg, NULL);
 		if(channels[i]->is_op(client) == true)
 			channels[i]->remove_op(client);
@@ -166,7 +166,12 @@ void part(Client *client, std::vector<Channel*>& channels, Server *server, std::
         //client->setStatus(client->getStatus() | CONNECTED);
 		client->remove_channel_fromchannelList(channel_name);
         if (channels[i]->getNbClient() <= 0)
-            channels.erase(channels.begin() + i);
+		{
+			delete channels[i];
+			channels.erase(channels.begin() + i);
+
+		}
+
         std::cout << client->getUsername() << " has left " << channel_name << std::endl;
     }
 }
@@ -334,6 +339,7 @@ std::string get_channel_pass(std::string cmd)
 	return channel_pass;
 }
 
+//MODE #chan +c arg
 void mode(std::string cmd, Client *client, Server* server)
 {
 	std::vector<std::string> input = ft_split(cmd, ' ');
@@ -342,7 +348,7 @@ void mode(std::string cmd, Client *client, Server* server)
 	Channel *channel = server->get_channel_by_name(input[1]);
 	std::string password;
 	if (!channel)
-		return(server->sendRPL(client, 403, channel->getName() + " :No such channel"));
+		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
 	if (!channel->is_op(client))
 		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
 	if (!channel->is_client(client))
@@ -410,7 +416,7 @@ void mode(std::string cmd, Client *client, Server* server)
 		if ((input[2] == "+l" || input[2] == "-o" || input[2] == "+o") && i > 3)
 			break;
 	}
-	if ((input[2] == "-k" || input[i] == "+k"))
+	if ((input[2] == "-k" || input[2] == "+k"))
 		msg = msg + " " + channel->get_pass();
 	msg = client->format_RPL(msg);
 	channel->sendMessageToAllClients(msg, NULL);
