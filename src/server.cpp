@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 19:59:32 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/30 15:02:44 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,9 +224,11 @@ void Server::removeClient(int client_fd) {
 		client = clients_map[client_fd];
 	if (!client)
 		return;
-    for (size_t i = 0; i < channels.size(); ++i) {
+    for (int i = channels.size() - 1; i >= 0; --i) {
         channels[i]->removeClient(client);
         channels[i]->remove_op(client);
+		if(channels[i]->getNbClient() <= 0)
+			removeChannel(channels[i]->getName());
     }
 	client = clients_map[client_fd];
 	remove_from_vec(this->user_list, client->getUsername());

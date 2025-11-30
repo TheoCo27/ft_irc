@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 23:16:32 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/11/30 15:36:40 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -451,8 +451,8 @@ void topic(std::string cmd, Client *client, Server *server)
 	if(input.size() == 2)
 	{
 		if(channel->get_topic() == "No topic set")
-			server->sendRPL(client, 331, input[1] + " :No topic is set");
-		if(channel->get_topic() != "*")
+			server->sendRPL(client, 331, input[1] + " :No topic set");
+		if(channel->get_topic() != "No topic set")
 			server->sendRPL(client, 332, input[1] + " :" + channel->get_topic());
 		//:server 333 <nick> #chan <who_set_it> <when_set> (lazy but if does not work Il do it)
 		return;
@@ -460,7 +460,7 @@ void topic(std::string cmd, Client *client, Server *server)
 	if(input.size() > 2 && channel->is_topic_restricted() && channel->is_op(client) == false)
 		return(server->sendRPL(client, 482, input[1] + " :You're not channel operator"));
 	new_topic = remove_1st_word(cmd);
-	new_topic = remove_1st_word(cmd);
+	new_topic = remove_1st_word(new_topic);
 	new_topic = is_valid_topic(new_topic);
 	if(new_topic == "")
 	{
