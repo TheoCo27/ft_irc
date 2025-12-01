@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/11/30 15:36:40 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/01 13:27:31 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -266,7 +266,7 @@ void nickname(std::string cmd, Client *client, Server *server)
 		std::string rpl = nick + " :Erroneous nickname";
 		return(server->sendRPL(client, 432, rpl));
 	}
-	std::vector<std::string> nickname_list = server->get_nickname_list();
+	std::vector<std::string>& nickname_list = server->get_nickname_list();
 	if (is_inside(nickname_list, nick))
 	{
 		std::string rpl = nick + " :Nickname is already in use";

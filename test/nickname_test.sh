@@ -11,6 +11,8 @@ PORT="6667"
     sleep 0.2
 	echo "NICK"
     sleep 0.2
+	echo "NICK theo"
+    sleep 0.2
     echo "NICK nickname_too_long"
 	sleep 0.2
     echo "NICK bot"

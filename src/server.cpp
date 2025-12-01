@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/30 15:02:44 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/01 12:30:12 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,13 +106,18 @@ void Server::start() {
 			perror("epoll_wait");
 			exit(EXIT_FAILURE);
 		}
-
-		for (int i = 0; i < n; ++i) {
-			if (events[i].data.fd == this->server_fd) {
+		for (int i = 0; i < n; ++i) 
+		{
+			uint32_t ev = events[i].events;
+			if (events[i].data.fd == this->server_fd)
 				acceptClient();
-			} else {
-				handleClient(events[i].data.fd);
+			else if(ev & (EPOLLRDHUP | EPOLLHUP | EPOLLERR))
+			{
+				closeClient(events[i].data.fd);
+				continue;			
 			}
+			else
+				handleClient(events[i].data.fd);
 		}
 	}
 }
@@ -133,7 +138,7 @@ void Server::acceptClient() {
 	//this->clients.push_back(client);
 	this->clients_map[client_fd] = client;
 	struct epoll_event event;
-	event.events = EPOLLIN;
+	event.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
 	event.data.fd = client_fd;
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, client_fd, &event) == -1) {
 		perror("epoll_ctl: client_fd");
@@ -230,7 +235,7 @@ void Server::removeClient(int client_fd) {
 		if(channels[i]->getNbClient() <= 0)
 			removeChannel(channels[i]->getName());
     }
-	client = clients_map[client_fd];
+	//client = clients_map[client_fd];
 	remove_from_vec(this->user_list, client->getUsername());
 	remove_from_vec(this->nickname_list, client->getNickname());
 	this->clients_map.erase(client_fd);

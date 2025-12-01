@@ -74,20 +74,23 @@ PORT="6667"
 ########################################
 # 2) CLIENT 2 : LA PERSONNE A INVITER
 ########################################
+gnome-terminal -- bash -c "
 {
-    sleep 1
-    echo "PASS theo2"
+     sleep 1
+    echo \"PASS theo\"
     sleep 0.2
-    echo "NICK tester"
+    echo \"NICK tester\"
     sleep 0.2
-    echo "USER u2 0 * :tester"
+    echo \"USER u2 0 * :tester\"
     sleep 2
 
     ####################################
     # Attendre l’invitation
     ####################################
     sleep 5
-    echo "JOIN #chips"
+    echo \"JOIN #chips\"
 
     sleep 2
 } | nc -C $HOST $PORT
+exec bash
+"
