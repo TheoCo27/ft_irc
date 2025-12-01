@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/01 13:27:31 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/01 18:04:55 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,11 +347,11 @@ void mode(std::string cmd, Client *client, Server* server)
 	Channel *channel = server->get_channel_by_name(input[1]);
 	std::string password;
 	if (!channel)
-		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
+		return(server->sendRPL(client, 403, input[1] + "MODE :No such channel"));
 	if (!channel->is_client(client))
-		return(server->sendRPL(client, 442, channel->getName() + " :You're not on that channel"));
+		return(server->sendRPL(client, 442, channel->getName() + "MODE :You're not on that channel"));
 	if (!channel->is_op(client))
-		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
+		return(server->sendRPL(client, 482, channel->getName() + "MODE :You're not channel operator"));
 	//basic check up there, special case down there
 	if (input.size() == 2)
 	{
@@ -362,11 +362,11 @@ void mode(std::string cmd, Client *client, Server* server)
 		return;
 	}
 	if(is_valid_mode(input[2]) == false)
-		return(server->sendRPL(client, 472, "Unkown mode char"));
+		return(server->sendRPL(client, 472, "MODE: Unkown mode char"));
 	if((input[2] == "+k" || input[2] == "+l" || input[2] == "+o" || input[2] == "-o") && input.size() < 4)
 		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));
 	if((input[2] == "+o" || input[2] == "-o") && !(channel->is_client(server->get_client_by_nick(input[3])))  )
-		return(server->sendRPL(client, 441, input[3] + " " + channel->getName() + " :User not in channel"));
+		return(server->sendRPL(client, 441, "MODE :" + input[3] + " " + channel->getName() + " :User not in channel"));
 	//error management on top mode controle down here
 	if (input[2] == "+i")
 		channel->set_invite_only(true);
@@ -508,7 +508,7 @@ std::string get_kick_reason(std::string cmd)
 	for(int i = 0; i < 3; i++)
 		reason = remove_1st_word(reason);
 	if(reason.empty())
-		return("Kicked");
+		return(":Kicked");
 	else
 		return (reason);
 }
@@ -523,7 +523,7 @@ void kick(std::string cmd, Client *client, Server* server)
 	std::string reason;
 
 	if(input.size() < 3)
-		return(server->sendRPL(client, 461, "INVITE :Not enough parameters"));
+		return(server->sendRPL(client, 461, "KICK :Not enough parameters"));
 	kicked_client = server->get_client_by_nick(input[2]);
 	if (!kicked_client)
 		return(server->sendRPL(client, 401, input[2] + " :No such nick"));
@@ -540,8 +540,8 @@ void kick(std::string cmd, Client *client, Server* server)
 		channel->remove_op(kicked_client);
 	channel->removeClient(kicked_client);
 	reason = get_kick_reason(cmd);
-	kicked_msg = client->format_RPL("KICK " + channel->getName() + " " + kicked_client->getNickname() + " :" + reason);
-	channel->sendMessageToAllClients(reason, NULL);
+	kicked_msg = client->format_RPL("KICK " + channel->getName() + " " + kicked_client->getNickname() + " " + reason);
+	channel->sendMessageToAllClients(kicked_msg, NULL);
 }
 
 std::string get_quit_reason(std::string cmd)

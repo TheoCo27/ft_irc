@@ -7,16 +7,17 @@ PORT="6667"
 # CLIENT 1 : opérateur / celui qui kick
 ########################################
 {
-    sleep 1
-    echo "PASS pass1"
+    sleep 2
+    echo "PASS theo"
     sleep 0.2
     echo "NICK op"
     sleep 0.2
     echo "USER u1 0 * :Operator"
-    sleep 0.2
+    sleep 1
     echo "JOIN #chips"
     sleep 0.5
-
+    echo "JOIN #alone"
+    sleep 0.5
     ####################################
     # TEST 1 : Pas assez de paramètres
     ####################################
@@ -30,48 +31,42 @@ PORT="6667"
     sleep 0.5
 
     ####################################
-    # TEST 3 : Channel inexistant
+    # TEST 3 : Channel inexistant ou pas dans le channel
     ####################################
     echo "KICK #nochannel guest"
     sleep 0.5
-
+    echo "KICK #not_in_channel guest"
+    sleep 0.5
     ####################################
     # TEST 4 : cible pas dans channel
     ####################################
-    echo "KICK #chips stranger"
+    echo "KICK #alone guest"
     sleep 0.5
 
     ####################################
-    # TEST 5 : nous ne sommes PAS opérateur dans un autre channel
+    # TEST 5 : nous ne sommes PAS opérateur
     ####################################
-    echo "JOIN #foo"
+    echo "JOIN #not_op"
     sleep 0.5
-    echo "KICK #foo guest"
-    sleep 0.5
-
-    ####################################
-    # Retour sur #chips
-    ####################################
-    echo "PART #foo"
-    echo "JOIN #chips"
+    echo "KICK #not_op guest"
     sleep 0.5
 
     ####################################
     # TEST 6 : kick normal
     ####################################
-    echo "KICK #chips guest"
+    echo "KICK #chips g1"
     sleep 1
 
     ####################################
     # TEST 7 : kick avec raison
     ####################################
-    echo "KICK #chips guest2 :because I can"
+    echo "KICK #chips g2 :because I can"
     sleep 1
 
     ####################################
     # TEST 8 : kick d’un opérateur
     ####################################
-    echo "KICK #chips guestop :bye operator"
+    echo "KICK #chips guest :bye operator"
     sleep 1
 
 } | nc -C $HOST $PORT &
@@ -81,56 +76,65 @@ PORT="6667"
 ########################################
 # CLIENT 2 : guest (doit être kické)
 ########################################
+
+gnome-terminal -- bash -c "
 {
     sleep 1
-    echo "PASS pass2"
+    echo \"PASS theo\"
     sleep 0.2
-    echo "NICK guest"
+    echo \"NICK guest\"
     sleep 0.2
-    echo "USER u2 0 * :GuestUser"
-    sleep 0.2
-    echo "JOIN #chips"
-    sleep 0.5
+    echo \"USER u2 0 * :GuestUser\"
+    sleep 0.3
+    echo \"JOIN #chips\"
+	sleep 0.3
+    echo \"JOIN #not_op\"
+	sleep 0.3
+    echo \"JOIN #not_in_channel\"
+	sleep 2
+	echo \"MODE #chips +o op\"
+    sleep 6
 
-    sleep 8
-} | nc -C $HOST $PORT &
-
-
-
-########################################
-# CLIENT 3 : guest2 (kick avec raison)
-########################################
-{
-    sleep 1
-    echo "PASS pass3"
-    sleep 0.2
-    echo "NICK guest2"
-    sleep 0.2
-    echo "USER u3 0 * :GuestTwo"
-    sleep 0.2
-    echo "JOIN #chips"
-    sleep 0.5
-
-    sleep 10
-} | nc -C $HOST $PORT &
-
-
-
-########################################
-# CLIENT 4 : guestop (opérateur qu’on kick)
-########################################
-{
-    sleep 1
-    echo "PASS pass4"
-    sleep 0.2
-    echo "NICK guestop"
-    sleep 0.2
-    echo "USER u4 0 * :GuestOP"
-    sleep 0.2
-    echo "JOIN #chips"
-    sleep 0.4
-    echo "MODE #chips +o guestop"
-    sleep 0.5
-
-    sleep 12
 } | nc -C $HOST $PORT
+exec bash
+"
+
+########################################
+# CLIENT 2 : guest (doit être kické)
+########################################
+
+gnome-terminal -- bash -c "
+{
+    sleep 2
+    echo \"PASS theo\"
+    sleep 0.2
+    echo \"NICK g1\"
+    sleep 0.2
+    echo \"USER u3 0 * :GuestUser\"
+    sleep 0.3
+    echo \"JOIN #chips\"
+	sleep 0.3
+
+} | nc -C $HOST $PORT
+exec bash
+"
+
+########################################
+# CLIENT 2 : guest (doit être kické)
+########################################
+
+gnome-terminal -- bash -c "
+{
+    sleep 2
+    echo \"PASS theo\"
+    sleep 0.2
+    echo \"NICK g2\"
+    sleep 0.2
+    echo \"USER u4 0 * :GuestUser\"
+    sleep 0.3
+    echo \"JOIN #chips\"
+	sleep 0.3
+
+} | nc -C $HOST $PORT
+exec bash
+"
