@@ -19,15 +19,33 @@ PORT="6667"
     sleep 0.2
     echo "PRIVMSG #chips Yoh l equipe si yen a un instalock je dodge direct"
     sleep 0.2
+    echo "PRIVMSG #no_chan Yoh l equipe si yen a un instalock je dodge direct"
+    sleep 0.2
     echo "JOIN #chips"
     sleep 0.2
     echo "PRIVMSG #chips Yoh l equipe si yen a un instalock je dodge direct"
     sleep 0.2
-    echo "PRIVMSG #no_channel hey"
-    sleep 0.2
     echo "PRIVMSG theo hey baby sa dit quoi ?"
     sleep 0.2
     echo "PRIVMSG bot help please"
+} | nc -C $HOST $PORT & 
+
+########################################
+# CLIENT 2 : observer (nouveau terminal)
+########################################
+gnome-terminal -- bash -c "
+{
+    sleep 1
+    echo \"PASS theo\"
     sleep 0.2
-    echo "PRIVMSG theo hey"
+    echo \"NICK theo\"
+    sleep 0.2
+    echo \"USER u2 0 * :WatcherUser\"
+
+    sleep 0.3
+    echo \"JOIN #chips\"
+    sleep 0.3
+
 } | nc -C $HOST $PORT
+exec bash
+"
