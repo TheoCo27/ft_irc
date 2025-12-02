@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/01 18:04:55 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/02 20:06:43 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ bool is_cmd(std::string str)
         if (startsWith(str, "INVITE") == true)
             return(true);
         if (startsWith(str, "KICK") == true)
+            return(true);
+        if (startsWith(str, "CAP") == true)
             return(true);
     }
     return(false);
@@ -190,11 +192,16 @@ void pass(std::string cmd, Client *client, Server* server)
 		server->sendRPL(client, 462, "Error, already registered");
 		return;
 	}
-	if (client->getStatus() == EMPTY) {
-		if (server->check_password(input)) {
-			client->setStatus(PASSWORD_OK);
+	if (!(client->getStatus() & CONNECTED)) 
+	{
+		if (server->check_password(input)) 
+		{
+			client->setStatus(client->getStatus() | PASSWORD_OK);
+			connect_client(client, server);
 			//server->sendNotice(client, "Password OK. Please type nickname:");
-		} else {
+		} 
+		else 
+		{
 			server->sendRPL(client, 464, ":Password incorrect");
 			server->closeClient(client->getClientFd());
 		}
@@ -217,6 +224,7 @@ void connect_client(Client *client, Server *server)
 		server->sendRPL(client, 002, "Your host is server.42irc, running version 1.0");
 		server->sendRPL(client, 003, "This server was created on 2025/05/12 18:10:52");
 		server->sendRPL(client, 004,  "server.42irc 1.0 o o");
+		std::cout << "client " << client->getNickname() << " has received rpl 001 to 004" << std::endl;
 	}
 }
 void username(std::string cmd, Client *client, Server *server)
@@ -225,11 +233,12 @@ void username(std::string cmd, Client *client, Server *server)
 
 	if (parsed_input.size() < 5)
 		return(server->sendRPL(client, 461, "USER :Not enough parameters"));
-	if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
+	// if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
+	if (client->getStatus() & CONNECTED)
 	{
 		server->sendRPL(client, 462, "You may not reregister");
-		if (!(client->getStatus() & CONNECTED))
-			server->sendNotice(client, "Use PASS command first");
+		// if (!(client->getStatus() & CONNECTED))
+		// 	server->sendNotice(client, "Use PASS command first");
 		return;
 	}
 	std::string username = parsed_input[1];
@@ -251,12 +260,12 @@ void username(std::string cmd, Client *client, Server *server)
 
 void nickname(std::string cmd, Client *client, Server *server)
 {
-	if (!(client->getStatus() & PASSWORD_OK))
-	{
-		server->sendRPL(client, 462, "You may not reregister");
-		server->sendNotice(client, "Use PASS command first");
-		return;
-	}
+	// if (!(client->getStatus() & PASSWORD_OK))
+	// {
+	// 	server->sendRPL(client, 462, "You may not reregister");
+	// 	server->sendNotice(client, "Use PASS command first");
+	// 	return;
+	// }
 	std::vector<std::string> tab = ft_split(cmd, ' ');
 	if (tab.size() < 2)
 		return(server->sendRPL(client, 431, ":No nickname given"));
@@ -272,7 +281,8 @@ void nickname(std::string cmd, Client *client, Server *server)
 		std::string rpl = nick + " :Nickname is already in use";
 		return(server->sendRPL(client, 433, rpl));
 	}
-	if(client->getStatus() & PASSWORD_OK && (!(client->getStatus() & CONNECTED)))
+	//if(client->getStatus() & PASSWORD_OK && (!(client->getStatus() & CONNECTED)))
+	if(!(client->getStatus() & CONNECTED))
 	{
 		client->setNickname(nick);
 		nickname_list.push_back(nick);
@@ -343,15 +353,15 @@ void mode(std::string cmd, Client *client, Server* server)
 {
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	if(input.size() <= 1)
-		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));	
+		return(server->sendRPL(client, 461, ":Not enough parameters"));	
 	Channel *channel = server->get_channel_by_name(input[1]);
 	std::string password;
 	if (!channel)
-		return(server->sendRPL(client, 403, input[1] + "MODE :No such channel"));
+		return(server->sendRPL(client, 403, input[1] + " :No such channel"));
 	if (!channel->is_client(client))
-		return(server->sendRPL(client, 442, channel->getName() + "MODE :You're not on that channel"));
+		return(server->sendRPL(client, 442, channel->getName() + ":You're not on that channel"));
 	if (!channel->is_op(client))
-		return(server->sendRPL(client, 482, channel->getName() + "MODE :You're not channel operator"));
+		return(server->sendRPL(client, 482, channel->getName() + ":You're not channel operator"));
 	//basic check up there, special case down there
 	if (input.size() == 2)
 	{
@@ -362,11 +372,11 @@ void mode(std::string cmd, Client *client, Server* server)
 		return;
 	}
 	if(is_valid_mode(input[2]) == false)
-		return(server->sendRPL(client, 472, "MODE: Unkown mode char"));
+		return(server->sendRPL(client, 472, ":Unkown mode char"));
 	if((input[2] == "+k" || input[2] == "+l" || input[2] == "+o" || input[2] == "-o") && input.size() < 4)
-		return(server->sendRPL(client, 461, "MODE :Not enough parameters"));
+		return(server->sendRPL(client, 461, ":Not enough parameters"));
 	if((input[2] == "+o" || input[2] == "-o") && !(channel->is_client(server->get_client_by_nick(input[3])))  )
-		return(server->sendRPL(client, 441, "MODE :" + input[3] + " " + channel->getName() + " :User not in channel"));
+		return(server->sendRPL(client, 441, ":" + input[3] + " " + channel->getName() + " :User not in channel"));
 	//error management on top mode controle down here
 	if (input[2] == "+i")
 		channel->set_invite_only(true);
@@ -389,7 +399,7 @@ void mode(std::string cmd, Client *client, Server* server)
 	{
 		channel->set_has_limit_user(true);
 		if (ft_sto_ui(input[3]) <= 0)
-			return(server->sendNotice(client, "MODE (+l): invalid limit"));
+			return(server->sendNotice(client, "(+l): invalid limit"));
 		channel->set_limit_user(std::atoi(input[3].c_str()));
 	}
 	if((input[2] == "+o" || input[2] == "-o"))
@@ -574,6 +584,13 @@ void quit(std::string cmd, Client *client, Server* server)
 	server->closeClient(client->getClientFd());
 }
 
+
+void cap(std::string cmd, Client *client, Server* server)
+{
+	(void)cmd;
+	server->sendMessage(client->getClientFd(), ":server.42irc CAP * LS : \r\n");
+}
+
 void make_command(std::string cmd, Client *client, Server* server)
 {
 	if (startsWith(cmd, "JOIN"))
@@ -600,6 +617,8 @@ void make_command(std::string cmd, Client *client, Server* server)
 		kick(cmd, client, server);
 	if (startsWith(cmd, "MODE"))
 		mode(cmd, client, server);
+	if (startsWith(cmd, "CAP"))
+		cap(cmd, client, server);
 }
 
 	// if (client->getStatus() == WAITING_PASSWORD) {

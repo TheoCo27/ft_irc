@@ -4,7 +4,7 @@ HOST="localhost"
 PORT="6667"
 
 {
-    sleep 1
+    sleep 0.1
     echo "PASS theo"
     sleep 0.2
     echo "NICK theo"

@@ -6,12 +6,14 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 17:48:47 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/02 19:51:19 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/utils.hpp"
 #include "../includes/server.hpp"
+#include <iomanip> // pour setw et setfill
+
 
 bool startsWith(const std::string& input, const std::string& prefix) {
     if (input.size() < prefix.size())
@@ -81,15 +83,24 @@ std::string format_client_notice(Client* client, const std::string& msg)
     return ss.str();
 }
 
+// std::string format_client_reply(Client *client, int rpl_code, std::string msg)
+// {
+// 	std::string reply;
+// 	std::stringstream ss;
+// 	ss << ":server.42irc " << rpl_code << " " << client->getNickname() << " " << msg << "\r\n";
+// 	reply = ss.str();
+// 	return (reply);
+// }
 std::string format_client_reply(Client *client, int rpl_code, std::string msg)
 {
-	std::string reply;
-	std::stringstream ss;
-
-	ss << ":server.42irc " << rpl_code << " " << client->getNickname() << " " << msg << "\r\n";
-	reply = ss.str();
-	return (reply);
+    std::stringstream ss;
+    ss << ":server.42irc "
+       << std::setw(3) << std::setfill('0') << rpl_code << " "
+       << client->getNickname() << " "
+       << msg << "\r\n";
+    return ss.str();
 }
+
 
 std::vector<std::string> ft_split(const std::string &s, char delim)
 {
