@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 22:13:05 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 22:18:53 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ Server::Server(int port, const std::string password) : password(password) {
 
 	if (bind(this->server_fd, (struct sockaddr*)&this->server_addr, sizeof(this->server_addr)) < 0) {
 		perror("bind");
+		close(this->server_fd);
 		exit(EXIT_FAILURE);
 	}
 
