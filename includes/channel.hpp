@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:09:46 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 22:04:45 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 22:50:20 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ class Channel
 		void sendMessage(int client_fd, const std::string& message);
 		std::string receiveMessage(int client_fd);
 		void remove_op(Client *client);
+		void add_invite(std::string nick_to_invite);
 
 		//getters
 		int getNbClient() const;

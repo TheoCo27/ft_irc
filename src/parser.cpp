@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 21:11:35 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 22:52:58 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -510,7 +510,7 @@ void invite(std::string cmd, Client *client, Server* server)
 		return(server->sendRPL(client, 443, input[1] + " " + input[2] + " :is already on channel"));
 	if(channel->is_invite_only() && channel->is_op(client) == false)
 		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
-	channel->get_invited_nick().push_back(invited_client->getNickname());
+	channel->add_invite(client->getNickname());
 	invite_msg = client->format_RPL("INVITE " + invited_client->getNickname() + " :" + channel->getName());
 	server->sendMessage(invited_client->getClientFd(), invite_msg);
 	server->sendRPL(client, 341, invited_client->getNickname() + " " + channel->getName());

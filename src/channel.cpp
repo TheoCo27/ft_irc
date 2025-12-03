@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 21:30:15 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 22:51:27 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,12 @@ std::string Channel::get_mode_list()
 	return (ss.str());
 }
 
+void Channel::add_invite(std::string nick_to_invite)
+{
+	if (is_inside(invited_nick, nick_to_invite))
+		return;
+	invited_nick.push_back(nick_to_invite);
+}
 
 
 //getters
