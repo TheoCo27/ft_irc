@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 21:44:49 by theog             #+#    #+#             */
-/*   Updated: 2025/11/29 17:05:44 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 20:23:25 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ std::string get_valid_realname(std::string rname)
 		output.erase(0, 1);
 	for(size_t i = 0; output[i]; i++)
 		if(!(std::isprint(static_cast<int>(rname[i]))) || output[i] == '\r' || output[i] == '\n')
-			output[i] = 'o';
+			output[i] = '-';
 	return output;
 }
 

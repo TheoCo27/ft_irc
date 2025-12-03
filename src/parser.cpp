@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 19:33:41 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 20:24:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,7 +327,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 		if (!(is_inside(client->get_channel_list(), input[1])))
 			return(server->sendRPL(client, 404, input[1] + "  :Cannot send to channel"));
 		std::cout << "send from PRIVMSG " << msg; 
-		channel->sendMessageToAllClients(msg, NULL);
+		channel->sendMessageToAllClients(msg, client);
 	}
 	else
 	{
@@ -446,7 +446,7 @@ void ping(std::string cmd, Client *client, Server *server)
 	if(input.size() < 2)
 		return(server->sendRPL(client, 409, ":No origin specified"));
 	arg = remove_1st_word(cmd);
-	msg = ":server.42irc PONG server :" + arg + "\n\r";
+	msg = ":server.42irc PONG server :" + arg + "\r\n";
 	server->sendMessage(client->getClientFd(), msg);
 }
 

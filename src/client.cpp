@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 19:47:10 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 19:58:05 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,9 @@ void Client::remove_channel_fromchannelList(std::string channel_name)
 }
 std::string Client::format_RPL(std::string msg)
 {
-	std::string reply = ":" + this->_nickname + "!" + this->_username + "@" + this->_realname + " " + msg + "\r\n";
+
+	//std::string reply = ":" + this->_nickname + "!" + this->_username + "@" + this->_realname + " " + msg + "\r\n";
+	std::string reply = ":" + this->_nickname + " " + msg + "\r\n";
 	return reply;
 }
 
