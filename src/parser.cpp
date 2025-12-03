@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 18:04:01 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 18:35:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -354,6 +354,9 @@ void mode(std::string cmd, Client *client, Server* server)
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	if(input.size() <= 1)
 		return(server->sendRPL(client, 461, ":Not enough parameters"));	
+	Client *test = server->get_client_by_nick(input[1]);
+	if (test)
+		return;
 	Channel *channel = server->get_channel_by_name(input[1]);
 	std::string password;
 	if (!channel)
@@ -591,7 +594,11 @@ void cap(std::string cmd, Client *client, Server* server)
 	if(input.size() >= 2 && input[1] == "END")
 	{
 		if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
+		{
 			server->sendRPL(client, 464, ":Password incorrect");
+			server->closeClient(client->getClientFd());
+		}
+		
 
 	}
 	(void)cmd;

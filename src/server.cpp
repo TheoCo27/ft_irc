@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/02 19:42:34 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 18:45:57 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,8 @@ void Server::handleClient(int client_fd) {
 	std::vector<std::string> all_msg = ft_split(full_msg, '\n');
 	for(size_t i = 0; i < all_msg.size(); i++)
 	{
+		if(clients_map.find(client_fd) == clients_map.end())
+			return; 
 		std::string cmd = all_msg[i];
 		cmd = trim(cmd);
 		if(cmd.empty())
@@ -252,8 +254,13 @@ void Server::removeClient(int client_fd) {
 	delete client;
 }
 
-void Server::sendMessage(int client_fd, const std::string& message) {
-	send(client_fd, message.c_str(), message.size(), 0);
+void Server::sendMessage(int client_fd, const std::string& message) 
+{
+	std::string msg(message);
+	if(msg.length() > 510)
+		msg = trunc(message, 510);
+	msg += "\r\n";
+	send(client_fd, msg.c_str(), msg.size(), 0);
 }
 
 std::string Server::receiveMessage(int client_fd) {

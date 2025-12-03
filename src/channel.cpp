@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/29 22:06:31 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 18:35:48 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ void Channel::sendMessageToAllClients(const std::string& message, Client *client
     {
         Client* ptr = *it;
         if (client != NULL && client != ptr)
-            send(ptr->getClientFd(), message.c_str(), from.size(), 0);
+            send(ptr->getClientFd(), message.c_str(), message.size(), 0);
         else if(client == NULL)
             send(ptr->getClientFd(), message.c_str(), message.size(), 0);
     }
