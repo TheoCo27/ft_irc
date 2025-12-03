@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:09:42 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/02 19:51:19 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 21:26:02 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,3 +162,26 @@ void make_bot_speak(Client *bot, Server *server, Client *dest)
 
 }
 
+
+std::vector<std::string> str_split(std::string s, std::string delim)
+{
+    std::vector<std::string> elems;
+    std::string::size_type pos = 0;
+    std::string::size_type prev = 0;
+
+    if (delim.empty())
+	{
+		elems.push_back(s);
+		return elems;
+	}
+    while ((pos = s.find(delim, prev)) != std::string::npos)
+    {
+        elems.push_back(s.substr(prev, pos - prev));
+        prev = pos + delim.size();
+    }
+
+    // ajouter le dernier segment
+    elems.push_back(s.substr(prev));
+
+    return elems;
+}

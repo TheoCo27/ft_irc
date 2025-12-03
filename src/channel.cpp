@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:00 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 18:35:48 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 21:30:15 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ Channel::~Channel()
 
 void Channel::addClient(Client* client)
 {
+	if(is_client(client))
+		return;
     nb_client++;
     // std::string welcome = "Welcome to ";
     // welcome.append(this->name);
@@ -78,7 +80,7 @@ void Channel::removeClient(Client* client)
 
 void Channel::sendMessageToAllClients(const std::string& message, Client *client)
 {
-    std::string from(message);
+   // std::string from(message);
     // if (client != NULL)
     // {
     //     from = "From ";
@@ -90,15 +92,22 @@ void Channel::sendMessageToAllClients(const std::string& message, Client *client
     {
         Client* ptr = *it;
         if (client != NULL && client != ptr)
-            send(ptr->getClientFd(), message.c_str(), message.size(), 0);
+            sendMessage(ptr->getClientFd(), message);
         else if(client == NULL)
-            send(ptr->getClientFd(), message.c_str(), message.size(), 0);
+            sendMessage(ptr->getClientFd(), message);
     }
 }
 
 void Channel::sendMessage(int client_fd, const std::string& message)
 {
-	send(client_fd, message.c_str(), message.size(), 0);
+	std::string msg(message);
+
+	if(msg.length() > 512)
+	{
+		msg = trunc(msg, 510);
+		msg += "\r\n";
+	}
+	send(client_fd, msg.c_str(), msg.size(), 0);
 }
 
 std::string Channel::receiveMessage(int client_fd)
@@ -111,7 +120,6 @@ std::string Channel::receiveMessage(int client_fd)
 	return std::string(buffer);
 }
 
-		std::vector<Client*> voiced;
 bool Channel::is_op(Client *client)
 {
     for (std::vector<Client*>::iterator it = operators.begin(); it != operators.end(); ++it)
@@ -225,8 +233,8 @@ void Channel::set_has_password(bool has_pass){this->has_password = has_pass;}
 void Channel::set_has_limit_user(bool has_limit_user){this->has_limit_user = has_limit_user;}
 void Channel::set_invite_only(bool is_invite_only){this->invite_only = is_invite_only;}
 void Channel::set_limit_user(int limit_user){this->limit_user = limit_user;}
-void Channel::add_op(Client* client){
-
+void Channel::add_op(Client* client)
+{
 	if(is_op(client))
 		return;
 	operators.push_back(client);

@@ -6,11 +6,12 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 19:58:05 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 21:17:34 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/client.hpp"
+#include "../includes/utils.hpp"
 
 Client::Client(int client_fd)
 {
@@ -29,7 +30,14 @@ Client::~Client(){
 
 void Client::sendMessage(int client_fd, const std::string& message)
 {
-	send(client_fd, message.c_str(), message.size(), 0);
+	std::string msg(message);
+
+	if(msg.length() > 512)
+	{
+		msg = trunc(msg, 510);
+		msg += "\r\n";
+	}
+	send(client_fd, msg.c_str(), msg.size(), 0);
 }
 
 std::string Client::receiveMessage(int client_fd)

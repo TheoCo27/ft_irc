@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 18:45:57 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 22:13:05 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,7 +182,7 @@ void Server::handleClient(int client_fd) {
 	client->setOld_buf("");
 	std::cout << "📩 Reçu du client " << client_fd << " : " << full_msg;
 	full_msg = trim(std::string(full_msg));
-	std::vector<std::string> all_msg = ft_split(full_msg, '\n');
+	std::vector<std::string> all_msg = str_split(full_msg, "\r\n");
 	for(size_t i = 0; i < all_msg.size(); i++)
 	{
 		if(clients_map.find(client_fd) == clients_map.end())
@@ -258,8 +258,10 @@ void Server::sendMessage(int client_fd, const std::string& message)
 {
 	std::string msg(message);
 	if(msg.length() > 510)
+	{
 		msg = trunc(message, 510);
-	msg += "\r\n";
+		msg += "\r\n";
+	}
 	send(client_fd, msg.c_str(), msg.size(), 0);
 }
 

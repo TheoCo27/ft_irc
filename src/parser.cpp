@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 20:24:02 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 21:11:35 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -609,6 +609,13 @@ void cap(std::string cmd, Client *client, Server* server)
 
 void make_command(std::string cmd, Client *client, Server* server)
 {
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
+	{
+		if(!(startsWith(cmd, "PASS")) && !(startsWith(cmd, "NICK")) && !(startsWith(cmd, "USER")) && !(startsWith(cmd, "QUIT")) && !(startsWith(cmd, "PING")))
+			return(server->sendRPL(client, 451, input[0] + " :You have not registered"));
+	}
+
 	if (startsWith(cmd, "JOIN"))
 		join(cmd, client, server);
 	if (startsWith(cmd, "PART"))
