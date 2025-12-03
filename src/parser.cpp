@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 18:35:02 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 19:00:07 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,6 +326,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 			return(server->sendRPL(client, 403, input[1] + " :No such channel"));
 		if (!(is_inside(client->get_channel_list(), input[1])))
 			return(server->sendRPL(client, 404, input[1] + "  :Cannot send to channel"));
+		std::cout << "send from PRIVMSG " << msg; 
 		channel->sendMessageToAllClients(msg, NULL);
 	}
 	else
@@ -336,6 +337,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 		Client *dest = server->get_client_by_nick(input[1]);
 		if (!dest)
 			return(server->sendRPL(client, 401, input[1] + " :No such nick"));
+		std::cout << "send from PRIVMSG " << msg; 
 		server->sendMessage(dest->getClientFd(), msg);
 	}
 }
@@ -590,17 +592,17 @@ void quit(std::string cmd, Client *client, Server* server)
 
 void cap(std::string cmd, Client *client, Server* server)
 {
-	std::vector<std::string> input = ft_split(cmd, ' ');
-	if(input.size() >= 2 && input[1] == "END")
-	{
-		if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
-		{
-			server->sendRPL(client, 464, ":Password incorrect");
-			server->closeClient(client->getClientFd());
-		}
+	// std::vector<std::string> input = ft_split(cmd, ' ');
+	// if(input.size() >= 2 && input[1] == "END")
+	// {
+	// 	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
+	// 	{
+	// 		server->sendRPL(client, 464, ":Password incorrect");
+	// 		server->closeClient(client->getClientFd());
+	// 	}
 		
 
-	}
+	// }
 	(void)cmd;
 	server->sendMessage(client->getClientFd(), ":server.42irc CAP * LS : \r\n");
 }
