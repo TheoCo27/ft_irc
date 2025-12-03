@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 19:00:07 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 19:33:41 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,7 @@ void privmsg(std::string cmd, Client *client, Server *server)
 		return(server->sendRPL(client, 411, ":No recipient given (PRIVMSG)"));
 	if(input.size() < 3)
 		return(server->sendRPL(client, 412, ":No text to send"));
-	msg = client->format_RPL("PRIVMSG "  + input[1] + " :" + msg);
+	msg = client->format_RPL("PRIVMSG "  + input[1] + " " + msg);
 	msg = get_valid_privmsg(msg);
 	if (input[1][0] == '#' || input[1][0] == '&')
 	{
