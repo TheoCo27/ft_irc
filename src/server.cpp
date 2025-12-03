@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 22:18:53 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 23:17:24 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ Server::Server(int port, const std::string password) : password(password) {
 
 	if (listen(this->server_fd, SOMAXCONN) < 0) {
 		perror("listen");
+		close(this->server_fd);
 		exit(EXIT_FAILURE);
 	}
 
@@ -86,6 +87,7 @@ void Server::init() {
 	this->epoll_fd = epoll_create(1);
 	if (this->epoll_fd == -1) {
 		perror("epoll_create");
+		close(this->server_fd);
 		exit(EXIT_FAILURE);
 	}
 
@@ -94,6 +96,8 @@ void Server::init() {
 	event.data.fd = this->server_fd;
 	if (epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, this->server_fd, &event) == -1) {
 		perror("epoll_ctl: server_fd");
+		close(this->server_fd);
+		close(this->epoll_fd);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -151,12 +155,14 @@ void Server::acceptClient() {
 
 bool is_msg_finished(std::string msg)
 {
-	if(msg.length() < 3)
-		return false;
-	size_t last_index = msg.length() - 1;
-	if (msg[last_index] != '\n' && msg[last_index - 1] != '\r')
-		return false;
-	return true;
+    if (msg.length() < 2)
+        return false;
+
+    size_t last_index = msg.length() - 1;
+    if (msg[last_index - 1] == '\r' && msg[last_index] == '\n')
+        return true;
+
+    return false;
 }
 
 
@@ -170,6 +176,7 @@ void Server::handleClient(int client_fd) {
 		return;
 	}
 	buffer[bytes] = '\0';
+	std::cout << "📩 RAW msg du client " << client_fd << " : " << buffer;
 	std::string old_buf = client->getold_buf();
 	if (old_buf.empty())
 		old_buf = buffer;
@@ -181,7 +188,7 @@ void Server::handleClient(int client_fd) {
 	std::string full_msg = client->getold_buf();
 	//full_msg += buffer;
 	client->setOld_buf("");
-	std::cout << "📩 Reçu du client " << client_fd << " : " << full_msg;
+	std::cout << "📩 COMPLETE msg du client " << client_fd << " : " << full_msg;
 	full_msg = trim(std::string(full_msg));
 	std::vector<std::string> all_msg = str_split(full_msg, "\r\n");
 	for(size_t i = 0; i < all_msg.size(); i++)

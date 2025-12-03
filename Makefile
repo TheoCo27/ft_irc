@@ -119,6 +119,9 @@ mode:
 
 quit:
 	bash $(TEST_DIR)/quit.sh
+
+nc:
+	bash $(TEST_DIR)/nc_c.sh
 # **************************************************************************** #
 #                                   PHONY                                      #
 # **************************************************************************** #
@@ -126,6 +129,6 @@ quit:
 .PHONY: all clean fclean re run test \
 	co client pass_test nickname_test user_test \
 	join_test part_test invite_test kick_test topic_test \
-	privmsg_test ping mode quit
+	privmsg_test ping mode quit nc
 
 
