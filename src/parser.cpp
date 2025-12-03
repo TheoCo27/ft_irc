@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/02 20:06:43 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/03 18:04:01 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,12 +233,12 @@ void username(std::string cmd, Client *client, Server *server)
 
 	if (parsed_input.size() < 5)
 		return(server->sendRPL(client, 461, "USER :Not enough parameters"));
-	// if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
-	if (client->getStatus() & CONNECTED)
+	//if (client->getStatus() & CONNECTED)
+	 if (client->getStatus() & CONNECTED || !(client->getStatus() & PASSWORD_OK))
 	{
 		server->sendRPL(client, 462, "You may not reregister");
-		// if (!(client->getStatus() & CONNECTED))
-		// 	server->sendNotice(client, "Use PASS command first");
+		if (!(client->getStatus() & CONNECTED))
+			server->sendNotice(client, "Use PASS command first");
 		return;
 	}
 	std::string username = parsed_input[1];
@@ -260,12 +260,12 @@ void username(std::string cmd, Client *client, Server *server)
 
 void nickname(std::string cmd, Client *client, Server *server)
 {
-	// if (!(client->getStatus() & PASSWORD_OK))
-	// {
-	// 	server->sendRPL(client, 462, "You may not reregister");
-	// 	server->sendNotice(client, "Use PASS command first");
-	// 	return;
-	// }
+	if (!(client->getStatus() & PASSWORD_OK))
+	{
+		server->sendRPL(client, 462, "You may not reregister");
+		server->sendNotice(client, "Use PASS command first");
+		return;
+	}
 	std::vector<std::string> tab = ft_split(cmd, ' ');
 	if (tab.size() < 2)
 		return(server->sendRPL(client, 431, ":No nickname given"));
@@ -587,6 +587,13 @@ void quit(std::string cmd, Client *client, Server* server)
 
 void cap(std::string cmd, Client *client, Server* server)
 {
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	if(input.size() >= 2 && input[1] == "END")
+	{
+		if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
+			server->sendRPL(client, 464, ":Password incorrect");
+
+	}
 	(void)cmd;
 	server->sendMessage(client->getClientFd(), ":server.42irc CAP * LS : \r\n");
 }
