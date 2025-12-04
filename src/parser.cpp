@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/03 22:52:58 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/04 17:54:48 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -551,12 +551,15 @@ void kick(std::string cmd, Client *client, Server* server)
 		return(server->sendRPL(client, 441, kicked_client->getNickname() + " " + channel->getName() + " :They aren't on that channel"));
 	if (!channel->is_op(client))
 		return(server->sendRPL(client, 482, channel->getName() + " :You're not channel operator"));
-	if(channel->is_op(kicked_client))
-		channel->remove_op(kicked_client);
-	channel->removeClient(kicked_client);
+	if(kicked_client == client)
+		return(server->sendNotice(client, "You cannot kick yourself"));
 	reason = get_kick_reason(cmd);
 	kicked_msg = client->format_RPL("KICK " + channel->getName() + " " + kicked_client->getNickname() + " " + reason);
 	channel->sendMessageToAllClients(kicked_msg, NULL);
+	if(channel->is_op(kicked_client))
+		channel->remove_op(kicked_client);
+	channel->removeClient(kicked_client);
+	kicked_client->remove_channel_fromchannelList(channel->getName());
 }
 
 std::string get_quit_reason(std::string cmd)
