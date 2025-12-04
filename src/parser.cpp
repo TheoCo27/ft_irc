@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/04 17:54:48 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/04 19:23:10 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ void join(std::string cmd, Client *client, Server *server)
 		if (channels[i]->check_has_password() == 1)
 			if (input.size() < 3 || input[2] != channels[i]->get_pass())
 				return(server->sendRPL(client, 475, input[1] + " :Cannot join channel (+k)"));
-		if(channels[i]->check_has_limit_user() == true && channels[i]->getNbClient() == channels[i]->get_limit_user())
-			return(server->sendRPL(client, 471, input[1] + ":Cannot join channel (+l)"));
+		if(channels[i]->check_has_limit_user() == true && channels[i]->getNbClient()  >= channels[i]->get_limit_user())
+			return(server->sendRPL(client, 471, input[1] + " :Cannot join channel (+l)"));
         channels[i]->addClient(client); // ajoute le client au channel
 		channel_list.push_back(input[1]); //ajoute le channel a la liste client
         //client->setChannelName(input[1]);
@@ -607,7 +607,7 @@ void cap(std::string cmd, Client *client, Server* server)
 
 	// }
 	(void)cmd;
-	server->sendMessage(client->getClientFd(), ":server.42irc CAP * LS : \r\n");
+	server->sendMessage(client->getClientFd(), ":server.42irc CAP * LS\r\n");
 }
 
 void make_command(std::string cmd, Client *client, Server* server)
