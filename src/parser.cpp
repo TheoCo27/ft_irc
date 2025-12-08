@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/04 19:23:10 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/08 19:07:04 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,33 +17,36 @@ bool is_cmd(std::string str)
 {
 	if (is_first_wrd_capital(str) == false)
 		return (false);
+	std::vector<std::string> input = ft_split(str, ' ');
+	if (input.size() < 1)
+		return false;
     for(int i = 0; i < 1; i++)
     {
-        if (startsWith(str, "PASS") == true)
+        if (input[0] == "PASS")
             return(true);
-        if (startsWith(str, "NICK") == true)
+        if (input[0] == "NICK")
             return(true);
-        if (startsWith(str, "USER") == true)
+        if (input[0] == "USER")
             return(true);
-        if (startsWith(str, "JOIN") == true)
+        if (input[0] == "JOIN")
             return(true);
-        if (startsWith(str, "PART") == true)
+        if (input[0] == "PART")
             return(true);
-        if (startsWith(str, "PRIVMSG") == true)
+        if (input[0] == "PRIVMSG")
             return(true);
-        if (startsWith(str, "QUIT") == true)
+        if (input[0] == "QUIT")
             return(true);
-        if (startsWith(str, "TOPIC") == true)
+        if (input[0] == "TOPIC")
             return(true);
-        if (startsWith(str, "MODE") == true)
+        if (input[0] == "MODE")
             return(true);
-        if (startsWith(str, "PING") == true)
+        if (input[0] == "PING")
             return(true);
-        if (startsWith(str, "INVITE") == true)
+        if (input[0] == "INVITE")
             return(true);
-        if (startsWith(str, "KICK") == true)
+        if (input[0] == "KICK")
             return(true);
-        if (startsWith(str, "CAP") == true)
+        if (input[0] == "CAP")
             return(true);
     }
     return(false);
@@ -217,6 +220,11 @@ std::string get_realname(std::string cmd)
 
 void connect_client(Client *client, Server *server)
 {
+	std::cout <<"cap ls =" << client->get_cap_ls() << "  cap end = " << client->get_cap_end() << std::endl;
+	if(client->get_cap_ls() == 1 && client->get_cap_end() == 0)
+	{
+		return;
+	}
 	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) == (PASSWORD_OK | NICK_OK | USER_OK))
 	{
 		client->setStatus(client->getStatus() | CONNECTED);
@@ -595,18 +603,23 @@ void quit(std::string cmd, Client *client, Server* server)
 
 void cap(std::string cmd, Client *client, Server* server)
 {
-	// std::vector<std::string> input = ft_split(cmd, ' ');
-	// if(input.size() >= 2 && input[1] == "END")
-	// {
-	// 	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
-	// 	{
-	// 		server->sendRPL(client, 464, ":Password incorrect");
-	// 		server->closeClient(client->getClientFd());
-	// 	}
-		
-
-	// }
-	(void)cmd;
+	std::vector<std::string> input = ft_split(cmd, ' ');
+	if(input.size() > 1)
+	{
+		if(input[1] == "LS")
+			client->set_cap_ls(1);
+		if(input[1] == "END")
+			client->set_cap_end(1);
+	}
+	if(input.size() >= 2 && input[1] == "END")
+	{
+		connect_client(client, server);
+		if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
+		{
+			server->sendRPL(client, 451, input[0] + " :You have not registered");
+			server->closeClient(client->getClientFd());
+		}		
+	}
 	server->sendMessage(client->getClientFd(), ":server.42irc CAP * LS\r\n");
 }
 
@@ -615,7 +628,8 @@ void make_command(std::string cmd, Client *client, Server* server)
 	std::vector<std::string> input = ft_split(cmd, ' ');
 	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) != (PASSWORD_OK | NICK_OK | USER_OK))
 	{
-		if(!(startsWith(cmd, "PASS")) && !(startsWith(cmd, "NICK")) && !(startsWith(cmd, "USER")) && !(startsWith(cmd, "QUIT")) && !(startsWith(cmd, "PING")))
+		if(!(startsWith(cmd, "PASS")) && !(startsWith(cmd, "NICK")) && !(startsWith(cmd, "USER")) 
+			&& !(startsWith(cmd, "QUIT")) && !(startsWith(cmd, "PING")) && !(startsWith(cmd, "CAP")))
 			return(server->sendRPL(client, 451, input[0] + " :You have not registered"));
 	}
 
@@ -646,20 +660,3 @@ void make_command(std::string cmd, Client *client, Server* server)
 	if (startsWith(cmd, "CAP"))
 		cap(cmd, client, server);
 }
-
-	// if (client->getStatus() == WAITING_PASSWORD) {
-	// 	if (check_password(input)) {
-	// 		client->setStatus(WAITING_USERNAME);
-	// 		sendMessage(client_fd, "Password OK. Please type username:\n");
-	// 	} else {
-	// 		sendMessage(client_fd, "Wrong password. Connection closed.\n");
-	// 		closeClient(client_fd);
-	// 		removeClient(client_fd);
-	// 	}
-	// }
-	// else if (client->getStatus() == WAITING_USERNAME) {
-	// 	client->setUsername(input);
-	// 	client->setStatus(CONNECTED);
-	// 	sendMessage(client_fd, "Welcome to the server!\n");
-	// 	std::cout << "🟢 Client connecté (fd: " << client_fd << ")" << std::endl;
-	// }

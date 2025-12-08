@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:15 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/24 10:33:08 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/08 18:54:15 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ private:
 	std::string channel_name;
 	std::vector<std::string> channel_list;
 	std::string old_buf;
+	bool cap_ls;
+	bool cap_end;
 
 public:
 	Client(int client_fd);
@@ -70,10 +72,14 @@ public:
 	void setClientFd(int client_fd);
 	void setChannelName(const std::string& channel_name);
 	void setOld_buf(std::string new_buf);
+	void set_cap_ls(bool mode);
+	void set_cap_end(bool mode);
 
 	// Méthodes
 	void sendMessage(int client_fd, const std::string& message);
 	std::string receiveMessage(int client_fd);
 	void remove_channel_fromchannelList(std::string channel_name);
 	std::string format_RPL(std::string msg);
+	bool get_cap_ls();
+	bool get_cap_end();
 };

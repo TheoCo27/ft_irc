@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:11:06 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 22:21:11 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/08 18:55:53 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ Client::Client(int client_fd)
 	this->status = EMPTY;
 	this->channel_name = "";
 	this->old_buf = "";
+	cap_ls = 0;
+	cap_end = 0;
 }
 Client::~Client(){
 	channel_list.clear();
@@ -127,4 +129,24 @@ void Client::setChannelName(const std::string& channel_name){
 
 void Client::setOld_buf(std::string new_buf){
 	this->old_buf = new_buf;
+}
+
+void Client::set_cap_ls(bool mode)
+{
+	cap_ls = mode;
+}
+
+void Client::set_cap_end(bool mode)
+{
+	cap_end = mode;
+}
+
+bool Client::get_cap_ls()
+{
+	return cap_ls;
+}
+
+bool Client::get_cap_end()
+{
+	return cap_end;
 }

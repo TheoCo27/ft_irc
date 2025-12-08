@@ -6,13 +6,14 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 17:34:52 by tcohen            #+#    #+#             */
-/*   Updated: 2025/11/26 19:12:29 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/08 18:41:59 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/server.hpp"
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
+#include "../includes/utils.hpp"
 #include <csignal>
 
 Server *get_server(Server *ptr, bool reset_static)
@@ -45,9 +46,15 @@ int main(int argc, char** argv)
 		std::cerr << "Usage: " << argv[0] << " <port>  <password> " << std::endl;
 		return EXIT_FAILURE;
 	}
-	int port = atoi(argv[1]);//pas ouf sa
+	int port = ft_sto_ui(argv[1]);
 	if (port <= 0 || port > 65535) {
 		std::cerr << "Port must be between 1 and 65535." << std::endl;
+		return EXIT_FAILURE;
+	}
+	std::string pass(argv[2]);
+	if(pass.empty() || check_valid_realname(pass) == false)
+	{
+		std::cerr << "Invalid password" << std::endl;
 		return EXIT_FAILURE;
 	}
 	Server server(port, argv[2]);
@@ -57,4 +64,3 @@ int main(int argc, char** argv)
 	server.start();
 	return EXIT_SUCCESS;
 }
-// 	this->poll_fds.push_back(server_poll_fd);

@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/12 18:10:09 by tcohen            #+#    #+#             */
-/*   Updated: 2025/12/03 23:17:24 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/08 18:40:51 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,6 @@
 #include <sys/epoll.h>
 
 #define MAX_EVENTS 1024
-
-// struct MatchClientPtr {
-// 	int client_fd;
-// 	MatchClientPtr(int fd) : client_fd(fd) {}
-// 	bool operator()(Client* c) const {
-// 		return c->getClientFd() == client_fd;
-// 	}
-// };
-
-// Initialisiation du serveur
 
 void Server::init_bot(void)
 {
@@ -140,7 +130,6 @@ void Server::acceptClient() {
 	}
 	make_socket_non_blocking(client_fd);
 	Client* client = new Client(client_fd);
-	//this->clients.push_back(client);
 	this->clients_map[client_fd] = client;
 	struct epoll_event event;
 	event.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
@@ -150,7 +139,6 @@ void Server::acceptClient() {
 		close(client_fd);
 		return;
 	}
-	//sendMessage(client_fd, "Please type server password!\n");
 }
 
 bool is_msg_finished(std::string msg)
@@ -168,7 +156,6 @@ bool is_msg_finished(std::string msg)
 
 void Server::handleClient(int client_fd) {
 	char buffer[BUFFER_SIZE];
-	//Client *client = get_client_by_fd(this->clients, client_fd);
 	Client *client = this->clients_map[client_fd];
 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
 	if (bytes <= 0) {
@@ -186,7 +173,6 @@ void Server::handleClient(int client_fd) {
 	if(is_msg_finished(old_buf) == false)
 		return;
 	std::string full_msg = client->getold_buf();
-	//full_msg += buffer;
 	client->setOld_buf("");
 	std::cout << "📩 COMPLETE msg du client " << client_fd << " : " << full_msg;
 	full_msg = trim(std::string(full_msg));
@@ -202,38 +188,7 @@ void Server::handleClient(int client_fd) {
 		std::cout << "📩 cmd envoyer dans input manager" << " : [" << cmd << "]" << std::endl;
 		inputs_manager(cmd, client_fd);
 	}
-	//inputs_manager(full_msg, client_fd);
 }
-
-// void Server::handleClient(int client_fd) {
-// 	char buffer[BUFFER_SIZE];
-// 	//Client *client = get_client_by_fd(this->clients, client_fd);
-// 	Client *client = this->clients_map[client_fd];
-// 	ssize_t bytes = recv(client_fd, buffer, sizeof(buffer) - 1, 0);
-// 	if (bytes <= 0) {
-// 		std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
-// 		closeClient(client_fd);
-// 		return;
-// 	}
-// 	buffer[bytes] = '\0';
-// 	if (buffer[bytes - 1] != '\n' && buffer[bytes - 2] != '\r')
-// 	{		std::string old_buf = client->getold_buf();
-// 		if (old_buf.empty())
-// 			old_buf = buffer;
-// 		else
-// 			old_buf += buffer;
-// 		client->setOld_buf(old_buf);
-// 		return;
-// 	}
-	
-// 	std::string full_msg = client->getold_buf();
-// 	full_msg += buffer;
-// 	client->setOld_buf("");
-// 	std::cout << "📩 Reçu du client " << client_fd << " : " << buffer;
-// 	full_msg = trim(std::string(buffer));
-// 	inputs_manager(full_msg, client_fd);
-// }
-
 
 void Server::closeClient(int client_fd) {
 	std::cout << "❌ Client déconnecté (fd: " << client_fd << ")" << std::endl;
@@ -255,7 +210,6 @@ void Server::removeClient(int client_fd) {
 		if(channels[i]->getNbClient() <= 0)
 			removeChannel(channels[i]->getName());
     }
-	//client = clients_map[client_fd];
 	remove_from_vec(this->user_list, client->getUsername());
 	remove_from_vec(this->nickname_list, client->getNickname());
 	this->clients_map.erase(client_fd);
@@ -286,40 +240,15 @@ bool Server::check_password(std::string str) {
 	return str == this->password;
 }
 
-// void Server::get_password(Client* client) {
-// 	sendMessage(client->getClientFd(), "Please type password!\n");
-// 	std::string to_check = trim(receiveMessage(client->getClientFd()));
-// 	if (check_password(to_check))
-// 		client->setStatus(WAITING_USERNAME);
-// }
-
-// void Server::get_username(Client* client) {
-// 	sendMessage(client->getClientFd(), "Please type username!\n");
-// 	std::string to_check = trim(receiveMessage(client->getClientFd()));
-// 	client->setUsername(to_check);
-// 	client->setStatus(CONNECTED);
-// }
-
 void Server::inputs_manager(std::string buffer, int client_fd) {
 	std::string inputs(buffer);
 	if (inputs.empty())
 		return;
-	//Client* client = get_client_by_fd(this->clients, client_fd);
 	Client* client = this->clients_map[client_fd];
 	if (is_cmd(inputs)) {
 		make_command(inputs, client, this);
 		return;
 	} 
-	// else if (client->getStatus() == IN_CHANNEL) {
-	// 	std::cout << "Looking for channel : " << client->getChannelName() << std::endl;
-	// 	for(std::vector<Channel*>::iterator it = channels.begin(); it != channels.end(); ++it)
-	// 	{
-	// 		Channel *chan = *it;
-	// 		std::cout << chan->getName() << std::endl;
-	// 	}
-	// 	int i = get_channel_index(client->getChannelName());
-	// 	channels[i]->sendMessageToAllClients(inputs, client);
-	// }
 	else
 	{
 		std::string reply = inputs + " :Unknown command";
@@ -340,12 +269,6 @@ void Server::sendNotice(Client *client, std::string msg)
 	std::string reply = format_client_notice(client, msg);
 	sendMessage(client->getClientFd(), reply);
 }
-// Client* get_client_by_fd(std::vector<Client*>& clients, int fd) {
-// 	std::vector<Client*>::iterator it = std::find_if(clients.begin(), clients.end(), MatchClientPtr(fd));
-// 	if (it != clients.end())
-// 		return *it;
-// 	return NULL;
-// }
 
 void Server::addChannel(std::string name) {
 	Channel *channel = new Channel(name);
@@ -406,17 +329,3 @@ std::string trim(const std::string& str) {
 		return "";
 	return str.substr(start, end - start + 1);
 }
-
-
-
-// void Server::SendRPL(int clientSocket, const std::string &replyCode, const std::string &nickname, const std::string &message) {
-//     std::ostringstream response;
-//     response << ":server " << replyCode << " " << nickname << " " << message << "\r\n";
-
-//     std::string responseStr = response.str();
-//     if (send(clientSocket, responseStr.c_str(), responseStr.size(), 0) == -1) {
-//         std::cerr << "Failed to send reply to client: " << clientSocket << std::endl;
-//     } else {
-//         std::cout << "Sent: " << responseStr;
-//     }
-// }
