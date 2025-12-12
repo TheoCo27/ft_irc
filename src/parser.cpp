@@ -6,7 +6,7 @@
 /*   By: tcohen <tcohen@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 02:12:07 by theog             #+#    #+#             */
-/*   Updated: 2025/12/08 19:07:04 by tcohen           ###   ########.fr       */
+/*   Updated: 2025/12/12 10:32:19 by tcohen           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,9 +222,7 @@ void connect_client(Client *client, Server *server)
 {
 	std::cout <<"cap ls =" << client->get_cap_ls() << "  cap end = " << client->get_cap_end() << std::endl;
 	if(client->get_cap_ls() == 1 && client->get_cap_end() == 0)
-	{
 		return;
-	}
 	if ((client->getStatus() & (PASSWORD_OK | NICK_OK | USER_OK)) == (PASSWORD_OK | NICK_OK | USER_OK))
 	{
 		client->setStatus(client->getStatus() | CONNECTED);
@@ -345,6 +343,8 @@ void privmsg(std::string cmd, Client *client, Server *server)
 		Client *dest = server->get_client_by_nick(input[1]);
 		if (!dest)
 			return(server->sendRPL(client, 401, input[1] + " :No such nick"));
+		if(!(dest->getStatus() & CONNECTED))
+			return(server->sendNotice(client, "Dest has not registered yet"));
 		std::cout << "send from PRIVMSG " << msg; 
 		server->sendMessage(dest->getClientFd(), msg);
 	}
